@@ -51,7 +51,53 @@ td input{width:78px;padding:5px 8px}
 .mut{color:var(--mut);font-size:13px}
 .stp{display:flex;gap:4px;margin:8px 0}.stp span{flex:1;text-align:center;font-size:11px;padding:5px 2px;border-radius:8px;background:#ffffff12;color:var(--mut)}.stp .on{background:var(--g);color:#0a0a0a;font-weight:700}
 .ph a{display:inline-block;margin:2px 0;color:var(--o);word-break:break-all}
-dialog{border:1px solid var(--ln);border-radius:20px;background:var(--card);color:var(--ink);padding:20px;width:min(94vw,600px);max-height:92vh;overflow:auto}
+
+dialog {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+
+  width: min(94vw, 560px);
+  max-width: 560px;
+  max-height: 85vh;
+
+  margin: 0;
+  padding: 24px;
+
+  border: 1px solid var(--ln);
+  border-radius: 20px;
+
+  background: var(--card);
+  color: var(--ink);
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.55);
+}
+
+/* Dark overlay behind the popup */
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+/* Mobile popup sizing */
+@media (max-width: 600px) {
+  dialog {
+    width: calc(100vw - 24px);
+    max-width: none;
+    max-height: 88vh;
+    padding: 18px;
+    border-radius: 16px;}}
+/* Keep popup content from overflowing */
+dialog img {
+  max-width: 100%;
+  height: auto;
+}
+dialog .row {
+  flex-wrap: wrap;
+}
 dialog::backdrop{background:#000c}
 #login{min-height:100vh;display:grid;place-items:center;padding:20px}
 #login form,#login .box{width:min(92vw,400px);display:grid;gap:12px;background:linear-gradient(160deg,#242424,var(--card));border:1px solid var(--ln);border-radius:20px;padding:28px}
