@@ -436,7 +436,7 @@ function rep(m){if(me.role!="owner"){m.innerHTML=hdr("Reports")+'<p class="mut">
 let rvf="new";
 async function revs(m){m.innerHTML=hdr("Reviews")+'<p class="mut">Loading…</p>';
  const r=await sb.from("reviews").select("*").order("id",{ascending:false}).limit(300);
- if(r.error){m.innerHTML=hdr("Reviews")+'<div class="warn">Reviews are not set up yet. Run trust.sql in Supabase, then refresh this page.</div>';return}
+ if(r.error){const miss=/does not exist|PGRST205|schema cache/i.test(r.error.message||"")||r.error.code=="42P01"||r.error.code=="PGRST205";m.innerHTML=hdr("Reviews")+'<div class="warn">'+(miss?"Reviews are not set up yet. Run trust.sql in Supabase, then refresh this page.":esc(r.error.message||"Could not load reviews."))+'</div>';return}
  const L=r.data.filter(x=>rvf=="all"||(rvf=="new"?!x.approved:x.approved)),stars=n=>"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n);
  m.innerHTML=`${hdr("Reviews")}<p class="mut" style="margin-bottom:12px">Customers write reviews on the store. Only the ones you approve appear on the website.</p><div class="row" style="margin-bottom:14px"><select id="rf" style="width:auto"><option value="new" ${rvf=="new"?"selected":""}>Waiting for approval</option><option value="ok" ${rvf=="ok"?"selected":""}>Approved</option><option value="all" ${rvf=="all"?"selected":""}>All</option></select></div>
 <div class="pan tbl w"><table><tr><th>Date</th><th>Name</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr>${L.map(x=>`<tr><td>${fd(x.created_at)}</td><td>${esc(x.name)}</td><td style="color:#f59e0b">${stars(x.rating)}</td><td style="white-space:normal;min-width:240px;max-width:420px">${esc(x.body)}</td><td>${x.approved?'<span class="bd ok">Shown</span>':'<span class="bd lo">Waiting</span>'}</td><td>${x.approved?`<button class="sm" data-h="${x.id}">Hide</button>`:`<button class="sm pri" data-a="${x.id}">Approve</button>`} <button class="sm dng" data-x="${x.id}">Delete</button></td></tr>`).join("")||'<tr><td colspan="6" class="mut">Nothing here.</td></tr>'}</table></div>`;
@@ -448,7 +448,7 @@ async function revs(m){m.innerHTML=hdr("Reviews")+'<p class="mut">Loading…</p>
 /* ---------- gallery (owner): photos for the store's Instagram section ---------- */
 async function gal(m){m.innerHTML=hdr("Gallery")+'<p class="mut">Loading…</p>';
  const r=await sb.from("gallery").select("*").order("position").order("id");
- if(r.error){m.innerHTML=hdr("Gallery")+'<div class="warn">The gallery is not set up yet. Run trust.sql in Supabase, then refresh this page.</div>';return}
+ if(r.error){const miss=/does not exist|PGRST205|schema cache/i.test(r.error.message||"")||r.error.code=="42P01"||r.error.code=="PGRST205";m.innerHTML=hdr("Gallery")+'<div class="warn">'+(miss?"The gallery is not set up yet. Run trust.sql in Supabase, then refresh this page.":esc(r.error.message||"Could not load gallery."))+'</div>';return}
  const L=r.data;
  m.innerHTML=`${hdr("Gallery")}<p class="mut" style="margin-bottom:12px">Photos shown in the store's Instagram section, which links to your Instagram page. The store shows the first 8 visible photos, in this order.</p>
 <form class="row" id="gf" style="margin-bottom:16px"><input type="file" id="gfi" accept="image/*" required style="max-width:260px"><input id="gfc" placeholder="Caption (optional)" maxlength="80" style="max-width:240px"><button class="pri">Add photo</button></form>
