@@ -95,10 +95,11 @@ dialog .row{flex-wrap:wrap}
 </style>
 </head>
 <body>
-<div id="login"></div>
+<div id="login"><div class="box"><div class="logo" style="font-size:30px">theoneanother</div><p class="mut">Loading…</p></div></div>
 <div class="app" id="app" hidden><aside id="sb"></aside><main id="mn"></main></div>
 <dialog id="dg"></dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>if(typeof supabase==="undefined")document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>');</script>
 <script>
 /* Paste your Supabase project values here (Project Settings > API). Use the anon / publishable key only. */
 const CFG={url:"https://eymxrutbkbtglynynokb.supabase.co",key:"sb_publishable_wyqPB_t2uyQjEN_JFDdQLA_vAPUV79U"};
@@ -116,7 +117,15 @@ const toast=t=>{t=String(t||"Something went wrong");if(/jwt expired|invalid jwt|
 /* Centre-of-screen confirm box (replaces the browser's own confirm and prompt). With {input:"text"} it asks for text and returns it, or null if cancelled. */
 function ask(msg,o={}){const ok=o.ok||"Confirm",danger=o.danger!==0,inp=o.input!=null;return new Promise(res=>{const d=document.createElement("dialog");d.className="ask";d.innerHTML=`<p style="white-space:pre-line;font-size:16px;margin-bottom:14px">${esc(msg)}</p>${inp?`<input id="ai1" value="${esc(o.input)}" maxlength="60" style="margin-bottom:14px">`:""}<div class="row" style="justify-content:center"><button class="pri ${danger?"dngf":""}" id="ay">${esc(ok)}</button><button id="an2">Cancel</button></div>`;document.body.append(d);let done=false;const fin=v=>{if(done)return;done=true;d.close();d.remove();res(v)};
  d.querySelector("#ay").onclick=()=>fin(inp?d.querySelector("#ai1").value:true);d.querySelector("#an2").onclick=()=>fin(inp?null:false);d.addEventListener("cancel",e=>{e.preventDefault();fin(inp?null:false)});if(inp)d.querySelector("#ai1").onkeydown=e=>{if(e.key=="Enter"){e.preventDefault();d.querySelector("#ay").click()}};d.showModal();if(inp)d.querySelector("#ai1").select()})}
-const sb=CFG.url.includes("YOUR-")?null:supabase.createClient(CFG.url,CFG.key);
+const memStore=(()=>{const m={};return{getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]}}})();
+const getStorage=()=>{try{const k="__toa_t";localStorage.setItem(k,"1");localStorage.removeItem(k);return localStorage}catch(e){return memStore}};
+let sb=null,initErr="";
+try{
+ if(!CFG.url.includes("YOUR-")){
+  if(typeof supabase==="undefined")throw new Error("Could not load Supabase script. Check your internet connection or ad-blocker and refresh.");
+  sb=supabase.createClient(CFG.url,CFG.key,{auth:{storage:getStorage()}});
+ }
+}catch(e){initErr=e&&e.message||"Could not initialize Supabase client."}
 const low=()=>+ST.low_stock||5,minO=()=>+ST.min_order||249,WA=()=>ST.wa||"917397193050";
 const run=async f=>{try{return await f()}catch(e){toast(e&&e.message);return null}};
 const must=r=>{if(r.error)throw r.error;return r.data};
@@ -129,13 +138,13 @@ async function load(){
  const pgd=async()=>{let out=await pg1(0);if(out.length<1000)return out;for(let i=1;i<10;i+=3){const b=await Promise.all([i,i+1,i+2].map(pg1));out=out.concat(...b);if(b.some(x=>x.length<1000))break}return out};
  let pr=await fetchP();
  const[s,o,c,ab]=await Promise.all([sb.from("settings").select("*"),pgd(),sb.from("categories").select("*").order("position").order("id"),sb.from("abandoned_carts").select("*").order("updated_at",{ascending:false}).limit(500)]);
- CT=must(c);
- P=must(pr).map(x=>({...x,variants:x.variants.sort((a,b)=>a.id-b.id)}));
- O=o.map(x=>({...x,ts:+new Date(x.created_at),total:+x.total,pay_amount:x.pay_amount==null?null:+x.pay_amount,order_items:x.order_items.sort((a,b)=>a.id-b.id)}));
- ST={};must(s).forEach(r=>ST[r.key]=r.value);AB=ab.error?null:ab.data;
+ CT=must(c)||[];
+ P=(must(pr)||[]).map(x=>({...x,variants:(x.variants||[]).sort((a,b)=>a.id-b.id)}));
+ O=(o||[]).map(x=>({...x,ts:+new Date(x.created_at),total:+x.total,pay_amount:x.pay_amount==null?null:+x.pay_amount,order_items:(x.order_items||[]).sort((a,b)=>a.id-b.id)}));
+ ST={};(must(s)||[]).forEach(r=>ST[r.key]=r.value);AB=ab.error?null:ab.data;
  const pe=await sb.from("razorpay_pending").select("*").eq("status","error").order("created_at",{ascending:false}).limit(50);PE=pe.error?[]:pe.data;
  DU={};O.forEach(x=>{if(x.utr&&live(x)){const k=x.utr.toLowerCase();DU[k]=(DU[k]||0)+1}});
- badge()}
+ badge();return 1}
 /* Products and categories only: much faster than a full reload after saving an item */
 const PSEL=(v,x)=>sb.from("products").select("id,name,type,active,category_id,image,customizable"+(x||"")+",variants("+v+")").order("id");
 const PCOLS=["id,name,price,stock,print_price,code,min_qty","id,name,price,stock,print_price,code","id,name,price,stock"];
@@ -143,7 +152,7 @@ const PCOLS=["id,name,price,stock,print_price,code,min_qty","id,name,price,stock
 async function fetchP(){let r;for(const x of [",description,images",""]){for(let i=0;i<3;i++){r=await PSEL(PCOLS[i],x);if(!r.error){NOMQ=i>0;NOINV=i>1;NODET=!x;return r}const m=r.error.message;if(x&&/description|images/i.test(m))break;if(!/print_price|code|min_qty|column/i.test(m))return r}}return r}
 const NOSZ="Each",ln=(a,b)=>b==NOSZ?a:a+" – "+b,single=t=>t=="sticker"||t=="polaroid";
 let NOMQ=false,NODET=false;
-async function loadP(){const[pr,c]=await Promise.all([fetchP(),sb.from("categories").select("*").order("position").order("id")]);CT=must(c);P=must(pr).map(x=>({...x,variants:x.variants.sort((a,b)=>a.id-b.id)}))}
+async function loadP(){const[pr,c]=await Promise.all([fetchP(),sb.from("categories").select("*").order("position").order("id")]);CT=must(c)||[];P=(must(pr)||[]).map(x=>({...x,variants:(x.variants||[]).sort((a,b)=>a.id-b.id)}))}
 let LIGHT=false;
 const flags=o=>{const f=[];if(o.utr&&live(o)&&DU[o.utr.toLowerCase()]>1)f.push("Duplicate UTR");if(o.pay_amount!=null&&Math.abs(o.pay_amount-o.total)>=1)f.push("Amount differs");return f};
 const badge=()=>{const n=O.filter(unv).length;document.title=(n?`(${n}) `:"")+"theoneanother – Admin";const c=document.querySelector("#sb [data-v=ord] .cnt");if(c){c.textContent=n;c.hidden=!n}};
@@ -157,19 +166,19 @@ const cell=v=>{v=String(v??"");if(/^(=|@|\t|\r|[+\-](?![\d ]))/.test(v))v="'"+v;
 const dl=(name,rows)=>{const b=new Blob(["\ufeff"+rows.map(r=>r.map(cell).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
 const ordRows=l=>[["Order","Date","Customer","Phone","Email","Address","Items","Total","Payment verified","UTR","Status","Courier","Tracking","Source","Refunded","Razorpay payment ID"],...l.map(o=>[o.number,new Date(o.ts).toISOString().slice(0,10),o.customer_name,o.phone,o.email||"",o.address,o.order_items.map(i=>i.product_name+" "+i.variant_name+" x"+i.qty).join("; "),o.total,o.paid?"yes":"no",o.utr||"",o.status,o.courier||"",o.tracking||"",o.source||"",o.refunded?"yes":"no",o.razorpay_payment_id||""])];
 /* ---------- login / account ---------- */
-function showLogin(msg,ok){if(!sb){$("login").hidden=false;$("login").innerHTML='<div class="box"><div class="logo" style="font-size:28px">theoneanother</div><p>Setup needed: open this file and paste your Supabase URL and anon key into <b>CFG</b> near the top of the script.</p></div>';return}
+function showLogin(msg,ok){if(!sb){$("login").hidden=false;$("app").hidden=true;$("login").innerHTML=`<div class="box"><div class="logo" style="font-size:28px">theoneanother</div><p>${msg?`<b style="color:var(--bad)">${esc(msg)}</b>`:"Setup needed: open this file and paste your Supabase URL and anon key into <b>CFG</b> near the top of the script."}</p></div>`;return}
  $("login").hidden=false;$("app").hidden=true;$("login").innerHTML=`<form id="lf"><div class="logo" style="font-size:30px">theoneanother</div><p class="mut">Admin login ${msg?`<br><b style="color:var(${ok?"--ok":"--bad"})">${esc(msg)}</b>`:""}</p><input id="lu" type="email" placeholder="Email" autocomplete="username" required><input id="lp" type="password" placeholder="Password" autocomplete="current-password" required><button class="pri" style="padding:11px">Login</button></form>`;
- $("lf").onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector(".pri");b.disabled=true;const r=await sb.auth.signInWithPassword({email:$("lu").value.trim(),password:$("lp").value});b.disabled=false;if(r.error)return toast(/invalid login credentials/i.test(r.error.message)?"Wrong email or password":r.error.message);enter()}}
+ $("lf").onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector(".pri");b.disabled=true;try{const r=await sb.auth.signInWithPassword({email:$("lu").value.trim(),password:$("lp").value});b.disabled=false;if(r.error)return toast(/invalid login credentials/i.test(r.error.message)?"Wrong email or password":r.error.message);await enter()}catch(err){b.disabled=false;toast(err&&err.message||"Login failed")}}}
 function acct(){const dg=$("dg");dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">Change my password</h3><button class="sm" id="x">Close</button></div><form class="f" id="pf" style="margin-top:12px"><input id="p1" type="password" placeholder="New password (8+ characters)" minlength="8" autocomplete="new-password" required><input id="p2" type="password" placeholder="Repeat new password" minlength="8" autocomplete="new-password" required><button class="pri" style="padding:10px">Update password</button></form>`;
  $("x").onclick=()=>dg.close();$("pf").onsubmit=async e=>{e.preventDefault();if($("p1").value!=$("p2").value)return toast("Passwords do not match");const r=await sb.auth.updateUser({password:$("p1").value});if(r.error)return toast(r.error.message);dg.close();toast("Password updated")};dg.showModal()}
-async function enter(){const u=(await sb.auth.getUser()).data.user;if(!u)return showLogin();const pr=(await sb.from("profiles").select("name,role").eq("id",u.id).maybeSingle()).data;if(!pr){await sb.auth.signOut();return showLogin("This account has no staff access.")}me=pr;
+async function enter(){try{const ur=await sb.auth.getUser();if(ur.error)return showLogin(ur.error.message);const u=ur.data&&ur.data.user;if(!u)return showLogin();const prRes=await sb.from("profiles").select("name,role").eq("id",u.id).maybeSingle();if(prRes.error)return showLogin(prRes.error.message);const pr=prRes.data;if(!pr){await sb.auth.signOut();return showLogin("This account has no staff access.")}me=pr;
  const ok=await run(load);if(ok===null&&!P.length&&!O.length&&!Object.keys(ST).length){me=null;return showLogin("Could not load data. Check your connection and try again.")}
- $("login").hidden=true;$("app").hidden=false;view=routeView();R()}
+ $("login").hidden=true;$("app").hidden=false;view=routeView();R()}catch(e){me=null;showLogin(e&&e.message||"Could not sign in. Please try again.")}}
 function nav(){const own=me.role=="owner",cur=view=="nw"?"ord":view,T=[["dash","Dashboard","dash"],["ord","Orders","ord"],["cus","Customers","cus"],["items","Items","stock"],["sales","Sales","sales"]];if(own)T.push(["rep","Reports","rep"],["revs","Reviews","act"],["gal","Gallery","prod"]);
  const B=t=>`<button class="nv ${cur==t[0]?"on":""}" data-v="${t[0]}">${ic(t[2])} ${t[1]}${t[0]=="ord"?'<span class="cnt" hidden></span>':""}</button>`;
  $("sb").innerHTML=`<div class="logo">theoneanother</div><div class="sec">GENERAL</div>${T.map(B).join("")}${own?`<div class="sec">SYSTEM</div>${[["act","Activity","act"],["set","Settings","set"]].map(B).join("")}`:""}<button class="nv bot" id="pw">${ic("key")} Password</button><button class="nv bot" id="lo">${ic("out")} Logout (${esc(me.name||me.role)})</button>`;
  $("sb").onclick=async e=>{const b=e.target.closest("button");if(!b)return;if(b.id=="lo"){me=null;await sb.auth.signOut();return showLogin()}if(b.id=="pw")return acct();if(b.dataset.v=="items")selV=null;go(b.dataset.v)};badge()}
-function R(){nav();const m=$("mn");m.onclick=null;m.onchange=null;m.oninput=null;m.onkeydown=null;({dash,ord,nw,cus,items,sales,rep,revs,gal,act:actv,set})[view](m)}
+function R(){try{nav();const m=$("mn");m.onclick=null;m.onchange=null;m.oninput=null;m.onkeydown=null;({dash,ord,nw,cus,items,sales,rep,revs,gal,act:actv,set})[view](m)}catch(e){toast(e&&e.message||"View failed to render")}}
 const reload=async()=>{await run(load);R()};
 /* ---------- shared pieces ---------- */
 const PN={d:"Daily",w:"Weekly",m:"Monthly",y:"Yearly"},PL2={d:"Today",w:"Last 7 days",m:"This month",y:"This year"},CL2={d:"Last 7 days",w:"Last 8 weeks",m:"Last 6 months",y:"This year"};
@@ -217,7 +226,7 @@ function ord(m){if(ot=="failed")return failed(m);const l=O.filter(ofl),sh=l.slic
  m.onclick=e=>{const tb=e.target.closest("[data-t]");if(tb){ot=tb.dataset.t;pg=1;ord(m);return}if(e.target.id=="mr"){pg++;ord(m);return}const r=e.target.closest("tr[data-o]");if(r)openO(r.dataset.o)}}
 function failed(m){const L=(AB||[]).filter(c=>ff=="open"?c.status=="open"&&Date.now()-new Date(c.updated_at)>20*60000:c.status=="handled");
  m.innerHTML=`${hdr("Orders",'<a class="btn pri" href="#nw">Create order</a>')}${otabs(failedCarts().length)}<p class="mut" style="margin-bottom:12px">Customers who added products and entered their contact details at checkout but did not finish paying. Message them on WhatsApp to help them complete the order.</p>${AB===null?'<div class="warn">Run inventory.sql in Supabase to turn on failed checkout tracking.</div>':""}<div class="row" style="margin-bottom:14px"><select id="ffs" style="width:auto"><option value="open" ${ff=="open"?"selected":""}>Needs follow-up</option><option value="handled" ${ff=="handled"?"selected":""}>Handled</option></select></div>
-<div class="pan tbl w"><table><tr><th>Last active</th><th>Customer</th><th>Contact</th><th>Address</th><th>Cart</th><th>Amount</th><th></th></tr>${L.map(c=>`<tr><td>${fdt(c.updated_at)}</td><td>${esc(c.name||"–")}</td><td>${esc(c.phone||"–")}<br><span class="mut">${esc(c.email||"")}</span></td><td style="white-space:pre-line;min-width:180px">${esc(c.address||"–")}</td><td>${(c.items||[]).map(i=>esc(i.name)+" "+esc(i.variant||"")+" × "+esc(i.qty)).join("<br>")}</td><td>${inr(c.total)}</td><td>${c.phone?`<a class="btn sm pri" target="_blank" rel="noopener" href="${wa("Hi "+(c.name||"")+", this is theoneanother. We saw you were placing an order but it was not completed. Can we help you finish it?",ph(c.phone))}">WhatsApp</a> `:""}${c.status=="open"?`<button class="sm" data-h="${c.id}">Mark handled</button> `:""}<button class="sm dng" data-x="${c.id}">Delete</button></td></tr>`).join("")||'<tr><td colspan="7" class="mut">Nothing here. Failed checkouts appear 20 minutes after a customer stops without paying.</td></tr>'}</table></div>`;
+<div class="pan tbl w"><table><tr><th>Last active</th><th>Customer</th><th>Contact</th><th>Address</th><th>Cart</th><th>Amount</th><th></th></tr>${L.map(c=>`<tr><td>${fdt(c.updated_at)}</td><td>${esc(c.name||"–")}</td><td>${esc(c.phone||"–")}<br><span class="mut">${esc(c.email||"")}</span></td><td style="white-space:pre-line;min-width:180px">${esc(c.address||"–")}</td><td>${(c.items||[]).map(i=>esc(i.name)+" "+esc(i.variant||"")+" × "+i.qty).join("<br>")}</td><td>${inr(c.total)}</td><td>${c.phone?`<a class="btn sm pri" target="_blank" rel="noopener" href="${wa("Hi "+(c.name||"")+", this is theoneanother. We saw you were placing an order but it was not completed. Can we help you finish it?",ph(c.phone))}">WhatsApp</a> `:""}${c.status=="open"?`<button class="sm" data-h="${c.id}">Mark handled</button> `:""}<button class="sm dng" data-x="${c.id}">Delete</button></td></tr>`).join("")||'<tr><td colspan="7" class="mut">Nothing here. Failed checkouts appear 20 minutes after a customer stops without paying.</td></tr>'}</table></div>`;
  $("ffs").onchange=e=>{ff=e.target.value;failed(m)};
  m.onclick=async e=>{const tb=e.target.closest("[data-t]");if(tb){ot=tb.dataset.t;ord(m);return}const h=e.target.dataset.h,x=e.target.dataset.x;
   if(h){try{await wr(sb.from("abandoned_carts").update({status:"handled"}).eq("id",h).select("id"))}catch(er){return toast(er.message)}await run(load);failed(m)}
@@ -492,7 +501,7 @@ function routeView(){let h=location.hash.slice(1);if(h=="stock"||h=="prod")h="it
 addEventListener("hashchange",()=>{if(me){view=routeView();R()}});
 $("dg").addEventListener("close",async()=>{if(!me||view=="nw")return;if(LIGHT){LIGHT=false;await run(loadP);R()}else reload()});
 if(sb)sb.auth.onAuthStateChange(ev=>{if(ev=="SIGNED_OUT"&&me)expire()});
-(async()=>{if(!sb)return showLogin();const s=(await sb.auth.getSession()).data.session;s?enter():showLogin()})();
+(async()=>{try{if(!sb)return showLogin(initErr);const r=await sb.auth.getSession();if(r.error)return showLogin(r.error.message);const s=r.data&&r.data.session;if(s)await enter();else showLogin()}catch(e){showLogin(e&&e.message||"Startup error. Please refresh and try again.")}})();
 </script>
 </body>
 </html>
