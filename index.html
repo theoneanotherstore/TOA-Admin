@@ -109,8 +109,6 @@ const ic=n=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColo
 const okF=f=>/\.(jpe?g|png|pdf)$/i.test(f.name)||/^(image\/(jpeg|pjpeg|png)|application\/pdf)$/.test(f.type),extOf=f=>/\.\w+$/.test(f.name)?"":(f.type=="image/png"?".png":f.type=="application/pdf"?".pdf":".jpg"),ctOf=f=>f.type||(/\.png$/i.test(f.name)?"image/png":/\.pdf$/i.test(f.name)?"application/pdf":"image/jpeg");
 const D=864e5,t0=()=>new Date().setHours(0,0,0,0);
 let PE=[];
- let PE=[]; let PE=[];
-let PE=[];
 let me=null,P=[],CT=[],O=[],AB=[],NOINV=false,ST={},DU={},view="dash",q="",fs="all",fr="all",pg=1,cq="",NL=[],ND={},ot="all",ff="open",dper="d",sper="m",rper="m",sq2="",selV=null,itab="d",iq="",icat="all",ilow=false;
 const expire=()=>{me=null;showLogin("Your session expired. Please log in again.")};
 /* Messages appear in the centre of the screen, above any open window */
@@ -136,7 +134,6 @@ async function load(){
  O=o.map(x=>({...x,ts:+new Date(x.created_at),total:+x.total,pay_amount:x.pay_amount==null?null:+x.pay_amount,order_items:x.order_items.sort((a,b)=>a.id-b.id)}));
  ST={};must(s).forEach(r=>ST[r.key]=r.value);AB=ab.error?null:ab.data;
  const pe=await sb.from("razorpay_pending").select("*").eq("status","error").order("created_at",{ascending:false}).limit(50);PE=pe.error?[]:pe.data;
- const pe=await sb.from("razorpay_pending").select("*").eq("status","error").order("created_at",{ascending:false}).limit(50);PE=pe.error?[]:pe.data;
  DU={};O.forEach(x=>{if(x.utr&&live(x)){const k=x.utr.toLowerCase();DU[k]=(DU[k]||0)+1}});
  badge()}
 /* Products and categories only: much faster than a full reload after saving an item */
@@ -158,7 +155,7 @@ const lowList=()=>P.filter(p=>p.active).flatMap(p=>p.variants.filter(v=>v.stock<
 const stB=s=>s<=0?'<span class="bd bad">Out of stock</span>':s<=low()?'<span class="bd lo">Low</span>':'<span class="bd ok">In stock</span>';
 const cell=v=>{v=String(v??"");if(/^(=|@|\t|\r|[+\-](?![\d ]))/.test(v))v="'"+v;return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
 const dl=(name,rows)=>{const b=new Blob(["\ufeff"+rows.map(r=>r.map(cell).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
-const ordRows=l=>[["Order","Date","Customer","Phone","Email","Address","Items","Total","Payment verified","UTR","Status","Courier","Tracking","Source","Source","Refunded","Razorpay payment ID"],...l.map(o=>[o.number,new Date(o.ts).toISOString().slice(0,10),o.customer_name,o.phone,o.email||"",o.address,o.order_items.map(i=>i.product_name+" "+i.variant_name+" x"+i.qty).join("; "),o.total,o.paid?"yes":"no",o.utr||"",o.status,o.courier||"",o.tracking||"",o.source||"",o.refunded?"yes":"no",o.razorpay_payment_id||""])];
+const ordRows=l=>[["Order","Date","Customer","Phone","Email","Address","Items","Total","Payment verified","UTR","Status","Courier","Tracking","Source","Refunded","Razorpay payment ID"],...l.map(o=>[o.number,new Date(o.ts).toISOString().slice(0,10),o.customer_name,o.phone,o.email||"",o.address,o.order_items.map(i=>i.product_name+" "+i.variant_name+" x"+i.qty).join("; "),o.total,o.paid?"yes":"no",o.utr||"",o.status,o.courier||"",o.tracking||"",o.source||"",o.refunded?"yes":"no",o.razorpay_payment_id||""])];
 /* ---------- login / account ---------- */
 function showLogin(msg,ok){if(!sb){$("login").hidden=false;$("login").innerHTML='<div class="box"><div class="logo" style="font-size:28px">theoneanother</div><p>Setup needed: open this file and paste your Supabase URL and anon key into <b>CFG</b> near the top of the script.</p></div>';return}
  $("login").hidden=false;$("app").hidden=true;$("login").innerHTML=`<form id="lf"><div class="logo" style="font-size:30px">theoneanother</div><p class="mut">Admin login ${msg?`<br><b style="color:var(${ok?"--ok":"--bad"})">${esc(msg)}</b>`:""}</p><input id="lu" type="email" placeholder="Email" autocomplete="username" required><input id="lp" type="password" placeholder="Password" autocomplete="current-password" required><button class="pri" style="padding:11px">Login</button></form>`;
@@ -483,13 +480,13 @@ async function tgUi(){const b=$("tg");if(!b)return;const s=await run(async()=>mu
   const r=await run(async()=>must(await sb.rpc("alert_result")));if(!r)return;let c={};try{c=JSON.parse(r.content||"{}")}catch(x){}
   toast(r.status_code==200?"Test sent. Check your Telegram.":"Telegram said: "+(c.description||r.error_msg||"no answer yet, try again in a few seconds"))};
  if($("tgo"))$("tgo").onclick=async()=>{if(!await ask("Turn off Telegram alerts? You can set them up again any time.",{ok:"Turn off"}))return;const ok=await run(async()=>{must(await sb.rpc("clear_telegram"));return 1});if(ok){toast("Alerts turned off");tgUi()}}}
-/* ---------- boot ---------- */
- /* ---------- online payments that did not become an order ---------- */
+/* ---------- online payments that did not become an order ---------- */
 function rzDlg(){const dg=$("dg");
  dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">Paid online, no order created</h3><button class="sm" id="x">Close</button></div><p class="mut" style="margin:6px 0 10px">These customers paid through Razorpay but the order could not be created (for example the item sold out). Refund each one in the Razorpay dashboard (Payments, search the payment ID, Refund), then press Mark refunded.</p><div class="w"><table id="rzt"><tr><th>Date</th><th>Customer</th><th>Amount</th><th>Payment ID</th><th>Reason</th><th></th></tr>${PE.map(x=>`<tr><td>${fdt(x.created_at)}</td><td>${esc((x.customer||{}).name)}<br><span class="mut">${esc((x.customer||{}).phone)}</span></td><td>${inr(x.amount/100)}</td><td>${esc(x.payment_id||"–")}</td><td style="white-space:normal;min-width:180px;max-width:240px">${esc(x.error||"")}</td><td><a class="btn sm" target="_blank" rel="noopener" href="${wa("Hi "+((x.customer||{}).name||"")+", this is theoneanother. Your payment went through but we could not complete the order, so we are refunding it. Sorry about that.",ph((x.customer||{}).phone||""))}">WhatsApp</a> <button class="sm pri" data-rf="${esc(x.rzp_order_id)}">Mark refunded</button></td></tr>`).join("")||'<tr><td colspan="6" class="mut">Nothing to refund.</td></tr>'}</table></div>`;
  $("x").onclick=()=>dg.close();
  $("rzt").onclick=async e=>{const id=e.target.dataset.rf;if(!id)return;if(!await ask("Have you refunded this payment in Razorpay?",{ok:"Yes, refunded",danger:0}))return;try{await wr(sb.from("razorpay_pending").update({status:"refunded"}).eq("rzp_order_id",id).select("rzp_order_id"))}catch(er){return toast(er.message)}await run(load);toast("Marked as refunded");rzDlg()};
  if(!dg.open)dg.showModal()}
+/* ---------- boot ---------- */
 setInterval(async()=>{if(!me||document.hidden||$("dg").open||!["dash","ord","cus"].includes(view))return;const n=O.length;await run(load);if(O.length>n)toast("New order received");if(!["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName))R();else badge()},60000);
 function routeView(){let h=location.hash.slice(1);if(h=="stock"||h=="prod")h="items";const ok=["dash","ord","nw","cus","items","sales"];if(me&&me.role=="owner")ok.push("rep","revs","gal","act","set");return ok.includes(h)?h:"dash"}
 addEventListener("hashchange",()=>{if(me){view=routeView();R()}});
