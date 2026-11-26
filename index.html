@@ -135,12 +135,12 @@ async function load(){
  DU={};O.forEach(x=>{if(x.utr&&live(x)){const k=x.utr.toLowerCase();DU[k]=(DU[k]||0)+1}});
  badge()}
 /* Products and categories only: much faster than a full reload after saving an item */
-const PSEL=v=>sb.from("products").select("id,name,type,active,category_id,image,customizable,variants("+v+")").order("id");
+const PSEL=(v,x)=>sb.from("products").select("id,name,type,active,category_id,image,customizable"+(x||"")+",variants("+v+")").order("id");
 const PCOLS=["id,name,price,stock,print_price,code,min_qty","id,name,price,stock,print_price,code","id,name,price,stock"];
 /* Tries the newest column set first and falls back, so the page still works before the SQL is run */
-async function fetchP(){let r;for(let i=0;i<3;i++){r=await PSEL(PCOLS[i]);if(!r.error){NOMQ=i>0;NOINV=i>1;break}if(!/print_price|code|min_qty|column/i.test(r.error.message))break}return r}
+async function fetchP(){let r;for(const x of [",description,images",""]){for(let i=0;i<3;i++){r=await PSEL(PCOLS[i],x);if(!r.error){NOMQ=i>0;NOINV=i>1;NODET=!x;return r}const m=r.error.message;if(x&&/description|images/i.test(m))break;if(!/print_price|code|min_qty|column/i.test(m))return r}}return r}
 const NOSZ="Each",ln=(a,b)=>b==NOSZ?a:a+" – "+b,single=t=>t=="sticker"||t=="polaroid";
-let NOMQ=false;
+let NOMQ=false,NODET=false;
 async function loadP(){const[pr,c]=await Promise.all([fetchP(),sb.from("categories").select("*").order("position").order("id")]);CT=must(c);P=must(pr).map(x=>({...x,variants:x.variants.sort((a,b)=>a.id-b.id)}))}
 let LIGHT=false;
 const flags=o=>{const f=[];if(o.utr&&live(o)&&DU[o.utr.toLowerCase()]>1)f.push("Duplicate UTR");if(o.pay_amount!=null&&Math.abs(o.pay_amount-o.total)>=1)f.push("Amount differs");return f};
@@ -163,11 +163,11 @@ function acct(){const dg=$("dg");dg.innerHTML=`<div class="row" style="justify-c
 async function enter(){const u=(await sb.auth.getUser()).data.user;if(!u)return showLogin();const pr=(await sb.from("profiles").select("name,role").eq("id",u.id).maybeSingle()).data;if(!pr){await sb.auth.signOut();return showLogin("This account has no staff access.")}me=pr;
  const ok=await run(load);if(ok===null&&!P.length&&!O.length&&!Object.keys(ST).length){me=null;return showLogin("Could not load data. Check your connection and try again.")}
  $("login").hidden=true;$("app").hidden=false;view=routeView();R()}
-function nav(){const own=me.role=="owner",cur=view=="nw"?"ord":view,T=[["dash","Dashboard","dash"],["ord","Orders","ord"],["cus","Customers","cus"],["items","Items","stock"],["sales","Sales","sales"]];if(own)T.push(["rep","Reports","rep"]);
+function nav(){const own=me.role=="owner",cur=view=="nw"?"ord":view,T=[["dash","Dashboard","dash"],["ord","Orders","ord"],["cus","Customers","cus"],["items","Items","stock"],["sales","Sales","sales"]];if(own)T.push(["rep","Reports","rep"],["revs","Reviews","act"],["gal","Gallery","prod"]);
  const B=t=>`<button class="nv ${cur==t[0]?"on":""}" data-v="${t[0]}">${ic(t[2])} ${t[1]}${t[0]=="ord"?'<span class="cnt" hidden></span>':""}</button>`;
  $("sb").innerHTML=`<div class="logo">theoneanother</div><div class="sec">GENERAL</div>${T.map(B).join("")}${own?`<div class="sec">SYSTEM</div>${[["act","Activity","act"],["set","Settings","set"]].map(B).join("")}`:""}<button class="nv bot" id="pw">${ic("key")} Password</button><button class="nv bot" id="lo">${ic("out")} Logout (${esc(me.name||me.role)})</button>`;
  $("sb").onclick=async e=>{const b=e.target.closest("button");if(!b)return;if(b.id=="lo"){me=null;await sb.auth.signOut();return showLogin()}if(b.id=="pw")return acct();if(b.dataset.v=="items")selV=null;go(b.dataset.v)};badge()}
-function R(){nav();const m=$("mn");m.onclick=null;m.onchange=null;m.oninput=null;m.onkeydown=null;({dash,ord,nw,cus,items,sales,rep,act:actv,set})[view](m)}
+function R(){nav();const m=$("mn");m.onclick=null;m.onchange=null;m.oninput=null;m.onkeydown=null;({dash,ord,nw,cus,items,sales,rep,revs,gal,act:actv,set})[view](m)}
 const reload=async()=>{await run(load);R()};
 /* ---------- shared pieces ---------- */
 const PN={d:"Daily",w:"Weekly",m:"Monthly",y:"Yearly"},PL2={d:"Today",w:"Last 7 days",m:"This month",y:"This year"},CL2={d:"Last 7 days",w:"Last 8 weeks",m:"Last 6 months",y:"This year"};
@@ -362,7 +362,7 @@ const PRESET=(t,c)=>{const R=(n,pr,pp,st,mq)=>({id:"new",name:n,code:"",price:pr
  if(t=="polaroid")return[c?R(NOSZ,69,20,50,5):R(NOSZ,49,20,50)];
  return[R("","",0,"")]};
 /* One form for both Create Item and Edit: product details, image and all its sizes with selling and printing prices */
-function editP(id){const p=id?P.find(x=>x.id==id):null,dg=$("dg"),own=me.role=="owner";if(id&&!p)return;let rmImg=false,pre=null,saved=false;
+function editP(id){const p=id?P.find(x=>x.id==id):null,dg=$("dg"),own=me.role=="owner";if(id&&!p)return;let rmImg=false,pre=null,saved=false,ims=[...((p&&p.images)||[])],rmIms=[],np=[];
  const drop=pr=>pr&&pr.then(x=>{if(x)sb.storage.from("product-images").remove([x])});
  dg.addEventListener("close",()=>{if(!saved)drop(pre)},{once:true});
  const lay=(ty,cu,n)=>{const ns=single(ty)&&n<=1,mq=cu&&single(ty)&&!NOMQ;return{ns,mq,sz:!ns,cols:[!ns&&"1.5fr","1fr","1fr","1fr","1fr",mq&&"1fr",!ns&&"auto"].filter(Boolean).join(" ")}};
@@ -370,6 +370,7 @@ function editP(id){const p=id?P.find(x=>x.id==id):null,dg=$("dg"),own=me.role=="
  dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">${p?"Edit Item":"Create New Item"}</h3><button class="sm" id="x">Close</button></div><form class="f" id="ep" style="margin-top:12px;max-width:none"><input id="en" placeholder="Product name" value="${esc(p?p.name:"")}" required maxlength="100"><select id="ec2" aria-label="Category">${copt(p?p.category_id:CT[0]&&CT[0].id)}</select><select id="et" aria-label="Product type">${TY.map(t=>`<option ${p&&p.type==t?"selected":""}>${t}</option>`).join("")}</select><p class="mut" style="margin-top:-4px">The type sets the stand-in picture and, for a new item, the ready-made sizes and prices.</p>
 <label class="row"><input type="checkbox" id="ecu" style="width:auto" ${p&&p.customizable?"checked":""}> Show in the store's Customize section instead of the shop (customer uploads photos and a note)</label><label class="row"><input type="checkbox" id="ea" style="width:auto" ${!p||p.active?"checked":""}> Show item in online store</label>
 ${p&&p.image?`<img id="pim" src="${esc(imgUrl(p.image))}" alt="" style="max-width:140px;border-radius:10px">`:""}<label class="mut" for="eimg">${p&&p.image?"Replace image":"Product image"}</label><input id="eimg" type="file" accept="image/*">${p&&p.image?'<button type="button" class="sm" id="prm" style="justify-self:start">Remove current image</button>':""}
+<label class="mut" for="ed">Description (shown on the product page; a new line starts a new paragraph)</label><textarea id="ed" rows="4" maxlength="2000" ${NODET?"disabled":""}>${esc(p&&p.description||"")}</textarea><label class="mut" for="eims">Extra gallery images (up to 6)</label><div class="row" id="xl"></div><input id="eims" type="file" accept="image/*" multiple ${NODET?"disabled":""}><p class="warn" id="dtn" ${NODET?"":"hidden"}>Description and extra images are not saved yet. Run product_details.sql in Supabase, then refresh this page.</p>
 <b>Sizes and prices</b><div class="vr vh" id="vh"></div><div id="vl" class="f" style="max-width:none"></div><p class="warn" id="mqn" hidden>Minimum quantity is not saved yet. Run min_qty.sql in Supabase, then refresh this page.</p><button type="button" class="sm" id="av2" style="justify-self:start">+ Add size</button><button class="pri" style="padding:10px">${p?"Save changes":"Save item"}</button></form>${p&&own?'<p style="margin-top:14px"><button class="sm dng" id="dp">Delete product</button></p>':""}`;
  const read=()=>[...dg.querySelectorAll("#vl .vr")].map(r=>{const o=p&&p.variants.find(v=>v.id==r.dataset.v),mq=r.querySelector(".vm");return{id:r.dataset.v,name:r.querySelector(".vn").value.trim(),code:r.querySelector(".vc").value.trim()||null,price:Number(r.querySelector(".vp").value),print_price:Number(r.querySelector(".vq").value||0),stock:Number(r.querySelector(".vs").value||0),min_qty:mq?Number(mq.value||1):((o&&o.min_qty)||1)}});
  const draw=list=>{const ty=$("et").value,cu=$("ecu").checked,o=lay(ty,cu,list.length);$("vh").style.gridTemplateColumns=o.cols;
@@ -380,6 +381,8 @@ ${p&&p.image?`<img id="pim" src="${esc(imgUrl(p.image))}" alt="" style="max-widt
  $("et").onchange=$("ecu").onchange=()=>draw(p?read():PRESET($("et").value,$("ecu").checked));
  $("x").onclick=()=>dg.close();
  $("av2").onclick=()=>{const L=read(),f=L[0]||{};draw(L.concat([{id:"new",name:"",code:"",price:"",print_price:f.print_price??"",stock:"",min_qty:f.min_qty||1}]))};
+ const drawX=()=>{$("xl").innerHTML=ims.map((k,i)=>`<span style="position:relative"><img src="${esc(imgUrl(k))}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:10px;display:block"><button type="button" class="sm" data-xi="${i}" style="position:absolute;right:-6px;top:-6px;padding:0 6px" aria-label="Remove image">×</button></span>`).join("")};
+ drawX();$("xl").onclick=e=>{const i=e.target.dataset.xi;if(i!=null){rmIms.push(ims.splice(+i,1)[0]);drawX()}};
  $("eimg").onchange=e=>{drop(pre);const f=e.target.files[0];pre=f?upImg(f).catch(er=>{toast(er.message);return null}):null};
  if($("prm"))$("prm").onclick=()=>{rmImg=true;if($("pim"))$("pim").remove();$("prm").remove()};
  $("vl").onclick=async e=>{if(e.target.dataset.rm){if($("vl").children.length<2)return toast("A product needs at least one size");e.target.closest(".vr").remove();return}const d=e.target.dataset.dv;if(d){if(p.variants.length<=1)return toast("A product needs at least one size");if(!await ask("Delete this size? Old orders keep their records.",{ok:"Delete size"}))return;try{await wr(sb.from("variants").delete().eq("id",d).select("id"))}catch(er){return toast(er.message)}await run(loadP);editP(id)}};
@@ -387,14 +390,16 @@ ${p&&p.image?`<img id="pim" src="${esc(imgUrl(p.image))}" alt="" style="max-widt
   if(!rows.length)return toast("Add at least one size");const bad=rows.find(r=>!r.name||!Number.isInteger(r.price)||r.price<0||!Number.isInteger(r.print_price)||r.print_price<0||!Number.isInteger(r.stock)||r.stock<0||!Number.isInteger(r.min_qty)||r.min_qty<1);if(bad)return toast("Every size needs a name, a selling price, a printing price and a stock count (whole numbers)");
   const b=e.target.querySelector(".pri");b.disabled=true;
   const ok=await run(async()=>{let im=p?p.image:null;const nf=$("eimg").files[0];if(nf){im=await(pre||upImg(nf));if(!im)throw new Error("Image upload failed. Please choose the image again.")}else if(rmImg)im=null;
-   const body={name:$("en").value.trim(),type:$("et").value,customizable:$("ecu").checked,active:$("ea").checked,category_id:$("ec2").value||null,image:im};let pid;
+   np=[];const xf=NODET?[]:[...$("eims").files];if(ims.length+xf.length>6)throw new Error("Maximum 6 extra images");
+   try{for(const f of xf)np.push(await upImg(f))}catch(er){if(np.length)sb.storage.from("product-images").remove(np);np=[];throw er}
+   const body={name:$("en").value.trim(),type:$("et").value,customizable:$("ecu").checked,active:$("ea").checked,category_id:$("ec2").value||null,image:im};if(!NODET){body.description=$("ed").value.trim()||null;body.images=[...ims,...np]}let pid;
    const mqf=r=>NOMQ?{}:{min_qty:r.min_qty};
    const ups=p?rows.filter(r=>r.id!="new").map(r=>{const o=p.variants.find(v=>v.id==r.id);return o&&(o.name!=r.name||o.price!=r.price||(o.print_price||0)!=r.print_price||(o.code||null)!=r.code||(!NOMQ&&(o.min_qty||1)!=r.min_qty))?wr(sb.from("variants").update({name:r.name,code:r.code,price:r.price,print_price:r.print_price,...mqf(r)}).eq("id",o.id).select("id")):null}).filter(Boolean):[];
    const insV=async id=>{const nv=rows.filter(r=>r.id=="new").map(r=>({product_id:id,name:r.name,code:r.code,price:r.price,print_price:r.print_price,stock:r.stock,...mqf(r)}));if(nv.length){const r2=await sb.from("variants").insert(nv);if(r2.error)throw r2.error}};
    try{if(p){pid=p.id;await Promise.all([wr(sb.from("products").update(body).eq("id",p.id).select("id")),...ups,insV(pid)])}
     else{pid=must(await sb.from("products").insert(body).select("id").single()).id;try{await insV(pid)}catch(er){await sb.from("products").delete().eq("id",pid);throw er}}}
-   catch(er){if(nf&&im)sb.storage.from("product-images").remove([im]);throw er}
-   if(p&&p.image&&im!==p.image)sb.storage.from("product-images").remove([p.image]);
+   catch(er){if(nf&&im)sb.storage.from("product-images").remove([im]);if(np.length)sb.storage.from("product-images").remove(np);np=[];throw er}
+   if(p&&p.image&&im!==p.image)sb.storage.from("product-images").remove([p.image]);if(rmIms.length)sb.storage.from("product-images").remove(rmIms);
    return 1});
   b.disabled=false;if(ok){saved=true;LIGHT=true;dg.close();toast("Item saved")}};
  if($("dp"))$("dp").onclick=async()=>{if(!await ask("Delete "+p.name+" and all its sizes? Old orders keep their records. Consider hiding it instead.",{ok:"Delete product"}))return;try{await wr(sb.from("products").delete().eq("id",p.id).select("id"))}catch(er){return toast(er.message)}if(p.image)sb.storage.from("product-images").remove([p.image]);selV=null;dg.close();toast("Product deleted")};
@@ -416,6 +421,35 @@ function rep(m){if(me.role!="owner"){m.innerHTML=hdr("Reports")+'<p class="mut">
  $("rp").onchange=e=>{rper=e.target.value;rep(m)};
  $("rd").onclick=()=>dl(nm+".csv",[["Date","Name","Invoice Number","Sales Amount"],...l.map(o=>[new Date(o.ts).toISOString().slice(0,10),o.customer_name,o.number,o.total])]);
  $("rpr").onclick=()=>printTable("Sales report ("+PN[rper]+")",["Date","Name","Invoice Number","Sales Amount"],l.map(o=>[fd(o.ts),o.customer_name,o.number,inr(o.total)]),"<p>Total sales: "+inr(tot)+" · Amount received: "+inr(rc)+" · Orders: "+l.length+"</p>")}
+/* ---------- reviews (owner): approve what customers wrote on the store ---------- */
+let rvf="new";
+async function revs(m){m.innerHTML=hdr("Reviews")+'<p class="mut">Loading…</p>';
+ const r=await sb.from("reviews").select("*").order("id",{ascending:false}).limit(300);
+ if(r.error){m.innerHTML=hdr("Reviews")+'<div class="warn">Reviews are not set up yet. Run trust.sql in Supabase, then refresh this page.</div>';return}
+ const L=r.data.filter(x=>rvf=="all"||(rvf=="new"?!x.approved:x.approved)),stars=n=>"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n);
+ m.innerHTML=`${hdr("Reviews")}<p class="mut" style="margin-bottom:12px">Customers write reviews on the store. Only the ones you approve appear on the website.</p><div class="row" style="margin-bottom:14px"><select id="rf" style="width:auto"><option value="new" ${rvf=="new"?"selected":""}>Waiting for approval</option><option value="ok" ${rvf=="ok"?"selected":""}>Approved</option><option value="all" ${rvf=="all"?"selected":""}>All</option></select></div>
+<div class="pan tbl w"><table><tr><th>Date</th><th>Name</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr>${L.map(x=>`<tr><td>${fd(x.created_at)}</td><td>${esc(x.name)}</td><td style="color:#f59e0b">${stars(x.rating)}</td><td style="white-space:normal;min-width:240px;max-width:420px">${esc(x.body)}</td><td>${x.approved?'<span class="bd ok">Shown</span>':'<span class="bd lo">Waiting</span>'}</td><td>${x.approved?`<button class="sm" data-h="${x.id}">Hide</button>`:`<button class="sm pri" data-a="${x.id}">Approve</button>`} <button class="sm dng" data-x="${x.id}">Delete</button></td></tr>`).join("")||'<tr><td colspan="6" class="mut">Nothing here.</td></tr>'}</table></div>`;
+ $("rf").onchange=e=>{rvf=e.target.value;revs(m)};
+ m.onclick=async e=>{const a=e.target.dataset.a,h=e.target.dataset.h,x=e.target.dataset.x;if(!a&&!h&&!x)return;
+  try{if(a||h)await wr(sb.from("reviews").update({approved:!!a}).eq("id",a||h).select("id"));
+   else{if(!await ask("Delete this review?",{ok:"Delete"}))return;await wr(sb.from("reviews").delete().eq("id",x).select("id"))}}catch(er){return toast(er.message)}
+  toast(a?"Review is now shown on the store":h?"Review hidden":"Review deleted");revs(m)}}
+/* ---------- gallery (owner): photos for the store's Instagram section ---------- */
+async function gal(m){m.innerHTML=hdr("Gallery")+'<p class="mut">Loading…</p>';
+ const r=await sb.from("gallery").select("*").order("position").order("id");
+ if(r.error){m.innerHTML=hdr("Gallery")+'<div class="warn">The gallery is not set up yet. Run trust.sql in Supabase, then refresh this page.</div>';return}
+ const L=r.data;
+ m.innerHTML=`${hdr("Gallery")}<p class="mut" style="margin-bottom:12px">Photos shown in the store's Instagram section, which links to your Instagram page. The store shows the first 8 visible photos, in this order.</p>
+<form class="row" id="gf" style="margin-bottom:16px"><input type="file" id="gfi" accept="image/*" required style="max-width:260px"><input id="gfc" placeholder="Caption (optional)" maxlength="80" style="max-width:240px"><button class="pri">Add photo</button></form>
+<div class="cards4">${L.map((x,i)=>`<div class="stat"><img src="${esc(imgUrl(x.image))}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;${x.active?"":"opacity:.45"}"><span style="margin:8px 0">${esc(x.caption||"No caption")}${x.active?"":" · hidden"}</span><div class="row"><button class="sm" data-u="${x.id}" ${i?"":"disabled"} aria-label="Move earlier">↑</button><button class="sm" data-d="${x.id}" ${i<L.length-1?"":"disabled"} aria-label="Move later">↓</button><button class="sm" data-t="${x.id}">${x.active?"Hide":"Show"}</button><button class="sm dng" data-x="${x.id}">Delete</button></div></div>`).join("")||'<p class="mut">No photos yet. Add the first one above.</p>'}</div>`;
+ $("gf").onsubmit=async e=>{e.preventDefault();const f=$("gfi").files[0];if(!f)return;const b=e.target.querySelector(".pri");b.disabled=true;let path=null;
+  try{path=await upImg(f);must(await sb.from("gallery").insert({image:path,caption:$("gfc").value.trim()||null,position:L.reduce((a,x)=>Math.max(a,x.position),0)+1}).select("id"))}catch(er){b.disabled=false;if(path)sb.storage.from("product-images").remove([path]);return toast(er.message)}
+  toast("Photo added");gal(m)};
+ const mv=async(id,d)=>{const a=L.map(x=>x.id),k=a.indexOf(id),n=k+d;if(n<0||n>=a.length)return;[a[k],a[n]]=[a[n],a[k]];
+  try{for(let i=0;i<a.length;i++){const x=L.find(y=>y.id==a[i]);if(x.position!=i+1)await wr(sb.from("gallery").update({position:i+1}).eq("id",x.id).select("id"))}}catch(er){return toast(er.message)}gal(m)};
+ m.onclick=async e=>{const t=e.target,g=k=>t.dataset[k]?+t.dataset[k]:null;if(g("u"))return mv(g("u"),-1);if(g("d"))return mv(g("d"),1);
+  if(g("t")){const x=L.find(y=>y.id==g("t"));try{await wr(sb.from("gallery").update({active:!x.active}).eq("id",x.id).select("id"))}catch(er){return toast(er.message)}gal(m)}
+  if(g("x")){const x=L.find(y=>y.id==g("x"));if(!await ask("Delete this photo from the gallery?",{ok:"Delete"}))return;try{await wr(sb.from("gallery").delete().eq("id",x.id).select("id"))}catch(er){return toast(er.message)}sb.storage.from("product-images").remove([x.image]);gal(m)}}}
 /* ---------- activity (owner) ---------- */
 const AL={order_created:"Order placed",payment_verified:"Payment verified",payment_unverified:"Payment un-verified",status_changed:"Status changed",order_cancelled:"Order cancelled",refund_marked:"Refund recorded",refund_unmarked:"Refund unmarked",tracking_updated:"Tracking updated",customer_edited:"Customer details edited",order_deleted:"Order deleted",photos_cleared:"Photos deleted",stock_changed:"Stock changed",price_changed:"Price changed",variant_deleted:"Variant deleted",product_added:"Product added",product_deleted:"Product deleted",product_hidden:"Product hidden",product_shown:"Product shown",product_renamed:"Product renamed",setting_changed:"Setting changed"};
 async function actv(m){m.innerHTML='<h1>Activity</h1><p class="mut" style="margin-top:10px">Loading…</p>';const r=await run(async()=>must(await sb.from("activity_log").select("*").order("id",{ascending:false}).limit(500)));if(!r)return;
@@ -446,7 +480,7 @@ async function tgUi(){const b=$("tg");if(!b)return;const s=await run(async()=>mu
  if($("tgo"))$("tgo").onclick=async()=>{if(!await ask("Turn off Telegram alerts? You can set them up again any time.",{ok:"Turn off"}))return;const ok=await run(async()=>{must(await sb.rpc("clear_telegram"));return 1});if(ok){toast("Alerts turned off");tgUi()}}}
 /* ---------- boot ---------- */
 setInterval(async()=>{if(!me||document.hidden||$("dg").open||!["dash","ord","cus"].includes(view))return;const n=O.length;await run(load);if(O.length>n)toast("New order received");if(!["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName))R();else badge()},60000);
-function routeView(){let h=location.hash.slice(1);if(h=="stock"||h=="prod")h="items";const ok=["dash","ord","nw","cus","items","sales"];if(me&&me.role=="owner")ok.push("rep","act","set");return ok.includes(h)?h:"dash"}
+function routeView(){let h=location.hash.slice(1);if(h=="stock"||h=="prod")h="items";const ok=["dash","ord","nw","cus","items","sales"];if(me&&me.role=="owner")ok.push("rep","revs","gal","act","set");return ok.includes(h)?h:"dash"}
 addEventListener("hashchange",()=>{if(me){view=routeView();R()}});
 $("dg").addEventListener("close",async()=>{if(!me||view=="nw")return;if(LIGHT){LIGHT=false;await run(loadP);R()}else reload()});
 if(sb)sb.auth.onAuthStateChange(ev=>{if(ev=="SIGNED_OUT"&&me)expire()});
