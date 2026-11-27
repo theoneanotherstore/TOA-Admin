@@ -1,577 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/jpeg" href="TOA%20logo.jpg">
-<title>theoneanother – Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#ffffff;--card:#fff;--ink:#0f172a;--mut:#64748b;--ln:#e2e8f0;--o:#ea580c;--g:#ea580c;--ok:#16a34a;--bad:#dc2626;--wr:#d97706;--side:#111111;color-scheme:light}
-*{box-sizing:border-box;margin:0}
-body{background:radial-gradient(900px 520px at 100% -10%,#ffedd5,transparent),radial-gradient(800px 520px at 0% 45%,#fff7ed,transparent),linear-gradient(180deg,#fff,#fffaf5 60%,#fff);background-attachment:fixed;color:var(--ink);font:400 14px/1.5 Roboto,system-ui,sans-serif}
-.ic{width:19px;height:19px;vertical-align:-4px}
-button,.btn{font:600 13px Roboto,sans-serif;cursor:pointer;border:1px solid var(--ln);background:#fff;color:var(--ink);padding:8px 14px;border-radius:8px;display:inline-block;text-decoration:none}
-button:hover,.btn:hover{background:#f1f5f9}
-button:disabled{opacity:.5;cursor:wait}
-.pri{background:var(--g);border-color:var(--g);color:#fff}.pri:hover{background:#c2410c}.sm{padding:4px 10px;font-size:12px}.dng{color:var(--bad);border-color:#fecaca}
-.pri.dngf{background:var(--bad);border-color:var(--bad);color:#fff}
-:focus-visible{outline:3px solid #fdba74;outline-offset:1px}
-.logo{font-weight:700;font-size:22px;letter-spacing:-.05em}
-.app{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
-#sb{position:sticky;top:0;height:100vh;padding:18px 12px;background:var(--side);color:#cbd5e1;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
-#sb .logo{padding:0 12px 14px;color:#fff}
-.sec{font:700 11px Roboto;letter-spacing:.08em;color:#94a3b8;padding:14px 12px 6px}
-.nv{display:flex;gap:12px;align-items:center;background:none;border:0;border-radius:10px;padding:11px 12px;font-weight:500;font-size:14px;width:100%;text-align:left;color:#cbd5e1}
-.nv:hover{background:#ffffff14}
-.nv.on{background:#c2410c;color:#fff;border-radius:999px}.nv.bot{margin-top:auto}.nv.bot~.nv.bot{margin-top:0}
-.nv .cnt{margin-left:auto;background:var(--bad);color:#fff;border-radius:99px;font-size:11px;padding:1px 7px}
-main{padding:0 28px 60px;min-width:0}
-main>h1:first-child{margin-top:22px}
-h1{font-weight:700;font-size:20px}
-h3{font-size:16px;margin:18px 0 8px}
-.pgh{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:13px 28px;margin:0 -28px 18px;background:#ffffffd9;backdrop-filter:blur(8px);border-bottom:1px solid var(--ln)}
-.cards4{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.tag-card img,.tag-card video{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#f1f5f9}
-.tag-card{border:1px solid var(--ln);border-radius:12px;padding:10px;background:#fff}
-.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;vertical-align:middle}
-.two2>.pan,.pan.tbl,.w{min-width:0}
-.dash-content{display:flex;flex-direction:column;gap:16px;width:100%;min-width:0}
-.dash-content>.pan{margin-top:0}
-.dash-split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px}
-.dash-split>.pan{margin-top:0;min-width:0}
-.stat{border:1px solid var(--ln);border-radius:12px;padding:16px;background:#fff}
-.stat.g{background:linear-gradient(135deg,#ecfdf5,#fff)}.stat.b{background:linear-gradient(135deg,#fff7ed,#fff)}.stat.r{background:linear-gradient(135deg,#fef2f2,#fff)}.stat.y{background:linear-gradient(135deg,#fffbeb,#fff)}
-.stat span{display:block;color:var(--mut);font-size:13px}.stat b{display:block;font-size:26px;font-weight:700;margin-top:2px}.stat small{color:var(--mut)}
-.go{cursor:pointer}.go:hover{border-color:var(--o)}
-.pan{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:16px;margin-top:16px}
-.pan.tbl{padding:0;overflow:hidden}
-.ph2{padding:14px 16px;font-weight:600;font-size:15px;border-bottom:1px solid var(--ln)}
-.pan>.ph2{margin:-16px -16px 14px}
-.pan.tbl>.ph2{margin:0}
-.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-.two2{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;margin-top:16px}
-.two2>.pan{margin-top:0}
-.chartbox{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:16px;align-items:center}
-.chartbox .side span{display:block;color:var(--mut);font-size:13px}.chartbox .side b{display:block;font-size:22px;margin-bottom:14px}
-.nt{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--ln)}
-.center{text-align:center;padding:12px}.center a{color:var(--o);font-weight:600}
-.w{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px}
-td,th{padding:12px 16px;border-bottom:1px solid var(--ln);text-align:left;vertical-align:middle;white-space:nowrap}
-th{background:#f1f5f9;color:#334155;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em}
-tr.cl{cursor:pointer}tr.cl:hover{background:#f8fafc}
-input,select,textarea{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--ln);background:#fff;color:var(--ink);font:inherit}
-td input{width:96px;padding:6px 8px}
-.bd{font-size:12px;font-weight:600;padding:2px 10px;border-radius:6px;background:#f1f5f9;color:#475569;display:inline-block;margin:1px 0}
-.bd.ok{background:#dcfce7;color:#166534}.bd.bad{background:#fee2e2;color:#991b1b}.bd.lo{background:#ffedd5;color:#9a3412}.bd.wr{background:#fef3c7;color:#92400e}
-.chip{font-size:12px;background:#f1f5f9;color:#334155;border-radius:6px;padding:1px 8px;display:inline-block;margin-top:4px}.chip.c2{background:#ffedd5;color:#9a3412}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--ln);margin:4px 0 16px;overflow-x:auto}
-.tab{border:0;background:none;border-radius:0;padding:10px 14px;color:var(--mut);font-weight:600;border-bottom:2px solid transparent;white-space:nowrap}
-.tab:hover{background:none;color:var(--ink)}.tab.on{color:var(--o);border-bottom-color:var(--o)}
-.tab .cnt{background:var(--bad);color:#fff;border-radius:99px;font-size:11px;padding:1px 7px;margin-left:6px}
-.split{display:grid;grid-template-columns:300px minmax(0,1fr);margin:0 -28px;min-height:calc(100vh - 20px)}
-.il{border-right:1px solid var(--ln);padding:14px;background:#fff;overflow:auto;max-height:100vh;position:sticky;top:0}
-.ii{border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin-top:8px;cursor:pointer;background:#fff}
-.ii.on{background:#fff7ed;border-color:#fed7aa}.ii span{display:block;text-align:right;color:var(--mut);font-size:12px}
-.id{padding:18px 28px;min-width:0}
-.gh td{background:#fff7ed;font-weight:600;border-top:1px solid #fed7aa}.vrow td:first-child{padding-left:40px}
-.dsh{border:1.5px dashed #fdba74;color:#ea580c;width:100%;margin-top:10px;background:#fff}
-.kv{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}.kv span{display:block;color:var(--mut);font-size:13px}.kv b{font-weight:500}
-.warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:10px 14px;margin:0 0 14px}
-.seg{display:flex;margin:10px 0}.seg button{flex:1;border-radius:0}.seg button:first-child{border-radius:8px 0 0 8px}.seg button:last-child{border-radius:0 8px 8px 0}.seg .on{background:var(--o);color:#fff;border-color:var(--o)}
-.vr{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:6px;align-items:center}.vr.vh span{font-size:11px;color:var(--mut)}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.f{display:grid;gap:10px;max-width:560px}
-.mut{color:var(--mut);font-size:13px}
-.stp{display:flex;gap:4px;margin:8px 0}.stp span{flex:1;text-align:center;font-size:11px;padding:5px 2px;border-radius:8px;background:#f1f5f9;color:var(--mut)}.stp .on{background:var(--o);color:#fff;font-weight:700}
-.ph a{display:inline-block;margin:2px 0;color:var(--o);word-break:break-all}
-dialog{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(94vw,560px);max-width:560px;max-height:88vh;margin:0;padding:24px;border:1px solid var(--ln);border-radius:16px;background:#fff;color:var(--ink);overflow-y:auto;overflow-x:hidden;box-shadow:0 20px 70px rgba(15,23,42,.35)}
-dialog::backdrop{background:rgba(15,23,42,.55);backdrop-filter:blur(3px)}
-dialog.ask{width:min(92vw,420px);text-align:center}
-dialog img{max-width:100%;height:auto}
-dialog .row{flex-wrap:wrap}
-#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:transparent}
-#login form,#login .box{width:min(92vw,400px);display:grid;gap:12px;background:#fff;border:1px solid var(--ln);border-radius:16px;padding:28px;box-shadow:0 10px 40px rgba(15,23,42,.08)}
-#login .logo{color:var(--ink)}
-.lnk{background:none;border:0;color:var(--mut);text-decoration:underline;font-weight:400;padding:0}
-.toast{position:fixed;inset:0;margin:auto;width:fit-content;height:fit-content;max-width:min(92vw,440px);padding:16px 26px;border:0;border-radius:14px;background:#111111;color:#fff;font-weight:600;font-size:15px;text-align:center;box-shadow:0 18px 60px rgba(15,23,42,.5);z-index:90;pointer-events:none;overflow:visible}
-[hidden]{display:none!important}
-@media(max-width:1000px){.two2,.chartbox,.dash-split{grid-template-columns:1fr}}
-@media(max-width:800px){.app{grid-template-columns:1fr}#sb{height:auto;flex-direction:row;overflow-x:auto;padding:8px;z-index:20}#sb .logo,.sec{display:none}.nv{width:auto;white-space:nowrap;padding:8px 12px}.nv.bot{margin-top:0}main{padding:0 14px 60px}.pgh{margin:0 -14px 14px;padding:12px 14px}.split{grid-template-columns:1fr;margin:0 -14px}.il{max-height:none;border-right:0;position:static}.id{padding:14px}.kv{grid-template-columns:1fr}.vr{grid-template-columns:1fr 1fr}dialog{width:calc(100vw - 20px);padding:16px}}
-</style>
-</head>
-<body>
-<div id="login"><div class="box"><div class="logo" style="font-size:30px">theoneanother</div><p class="mut">Loading…</p></div></div>
-<div class="app" id="app" hidden><aside id="sb"></aside><main id="mn"></main></div>
-<dialog id="dg"></dialog>
-<script src="admin-recovery.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script>if(typeof supabase==="undefined")document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>');</script>
-<script>
-/* Paste your Supabase project values here (Project Settings > API). Use the anon / publishable key only. */
-const CFG={url:"https://eymxrutbkbtglynynokb.supabase.co",key:"sb_publishable_wyqPB_t2uyQjEN_JFDdQLA_vAPUV79U"};
-const $=i=>document.getElementById(i),inr=n=>"₹"+Number(n||0).toLocaleString("en-IN"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fdt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}),fd=t=>new Date(t).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
-const IC={dash:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',ord:'<path d="M6 7h12l-1 13H7L6 7zM9 7a3 3 0 016 0"/>',nw:'<path d="M12 5v14M5 12h14"/>',cus:'<circle cx="9" cy="9" r="3"/><path d="M3 20c0-3.5 3-6 6-6s6 2.5 6 6M16 6a3 3 0 010 6M18 14c2 .7 3 2.6 3 5"/>',stock:'<path d="M12 3l8 4v10l-8 4-8-4V7l8-4zM4 7l8 4 8-4M12 11v10"/>',prod:'<rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M20 16l-5-4-8 7"/>',rep:'<path d="M5 20V10M12 20V4M19 20v-7"/>',act:'<path d="M7 4h10v16H7zM10 8h4M10 12h4M10 16h2"/>',set:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>',key:'<circle cx="8" cy="12" r="3"/><path d="M11 12h9M17 12v3"/>',out:'<path d="M9 5H5v14h4M16 8l4 4-4 4M20 12H9"/>',sales:'<path d="M4 12l8-8h8v8l-8 8z"/><circle cx="16" cy="8" r="1.4"/>'};
-const ic=n=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
-const okF=f=>/\.(jpe?g|png|pdf)$/i.test(f.name)||/^(image\/(jpeg|pjpeg|png)|application\/pdf)$/.test(f.type),extOf=f=>/\.\w+$/.test(f.name)?"":(f.type=="image/png"?".png":f.type=="application/pdf"?".pdf":".jpg"),ctOf=f=>f.type||(/\.png$/i.test(f.name)?"image/png":/\.pdf$/i.test(f.name)?"application/pdf":"image/jpeg");
-const D=864e5,t0=()=>new Date().setHours(0,0,0,0);
-let PE=[],PE_ERROR="",loadSeq=0,lastLoaded=0,dashLoading=false,dashError="";
-let me=null,P=[],CT=[],O=[],NOINV=false,ST={},DU={},view="dash",q="",fs="all",fr="all",pg=1,cq="",NL=[],ND={},dper="d",sper="7",rper="7",dashReportPeriod=7,sq2="",selV=null,itab="d",iq="",icat="all",ilow=false;
-const expire=()=>{me=null;showLogin("Your session expired. Please log in again.")};
-/* Messages appear in the centre of the screen, above any open window */
-const toast=t=>{t=String(t||"Something went wrong");if(/jwt expired|invalid jwt|not authenticated/i.test(t)){if(me)expire();return}if(/failed to fetch|networkerror|load failed/i.test(t))t="Network problem. Check your internet and try again.";const d=document.createElement("div");d.className="toast";d.setAttribute("role","status");d.setAttribute("popover","manual");d.textContent=t;document.body.append(d);try{d.showPopover()}catch(e){}setTimeout(()=>{try{d.hidePopover()}catch(e){}d.remove()},3800)};
-/* Centre-of-screen confirm box (replaces the browser's own confirm and prompt). With {input:"text"} it asks for text and returns it, or null if cancelled. */
-function ask(msg,o={}){const ok=o.ok||"Confirm",danger=o.danger!==0,inp=o.input!=null;return new Promise(res=>{const d=document.createElement("dialog");d.className="ask";d.innerHTML=`<p style="white-space:pre-line;font-size:16px;margin-bottom:14px">${esc(msg)}</p>${inp?`<input id="ai1" value="${esc(o.input)}" maxlength="60" style="margin-bottom:14px">`:""}<div class="row" style="justify-content:center"><button class="pri ${danger?"dngf":""}" id="ay">${esc(ok)}</button><button id="an2">Cancel</button></div>`;document.body.append(d);let done=false;const fin=v=>{if(done)return;done=true;d.close();d.remove();res(v)};
- d.querySelector("#ay").onclick=()=>fin(inp?d.querySelector("#ai1").value:true);d.querySelector("#an2").onclick=()=>fin(inp?null:false);d.addEventListener("cancel",e=>{e.preventDefault();fin(inp?null:false)});if(inp)d.querySelector("#ai1").onkeydown=e=>{if(e.key=="Enter"){e.preventDefault();d.querySelector("#ay").click()}};d.showModal();if(inp)d.querySelector("#ai1").select()})}
-const memStore=(()=>{const m={};return{getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]}}})();
-const getStorage=()=>{try{const k="__toa_t";localStorage.setItem(k,"1");localStorage.removeItem(k);return localStorage}catch(e){return memStore}};
-let sb=null,initErr="";
-try{
- if(!CFG.url.includes("YOUR-")){
-  if(typeof supabase==="undefined")throw new Error("Could not load Supabase script. Check your internet connection or ad-blocker and refresh.");
-  sb=supabase.createClient(CFG.url,CFG.key,{auth:{storage:getStorage()}});
- }
-}catch(e){initErr=e&&e.message||"Could not initialize Supabase client."}
-const low=()=>+ST.low_stock||5,minO=()=>+ST.min_order||249,WA=()=>ST.wa||"917397193050";
-const run=async f=>{try{return await f()}catch(e){toast(e&&e.message);return null}};
-const must=r=>{if(r.error)throw r.error;return r.data};
-const wr=async pr=>{const r=await pr;if(r.error)throw r.error;if(Array.isArray(r.data)&&!r.data.length)throw new Error("Not saved: you may not have permission for this");return r.data};
-const go=v=>{if(location.hash.slice(1)==v)R();else location.hash=v};
-/* ---------- data ---------- */
-const live=o=>o.status!="cancelled",unv=o=>!o.paid&&live(o),stale=o=>unv(o)&&Date.now()-o.ts>D;
-async function load(){
- const seq=++loadSeq;
- const pg1=async i=>must(await sb.from("orders").select("*,order_items(*)").order("created_at",{ascending:false}).order("id",{ascending:false}).range(i*1000,i*1000+999));
- const pgd=async()=>{const out=[];for(let i=0;;i+=3){const b=await Promise.all([i,i+1,i+2].map(pg1));for(const page of b){out.push(...page);if(page.length<1000)return out}}};
- let timer;
- let data;
- try{
-  data=await Promise.race([
-   (async()=>{const[pr,s,o,c,pe]=await Promise.all([fetchP(),sb.from("settings").select("*"),pgd(),sb.from("categories").select("*").order("position").order("id"),sb.from("razorpay_pending").select("*").eq("status","error").order("created_at",{ascending:false}).limit(50)]);return{pr,s,o,c,pe}})(),
-   new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error("Loading dashboard data timed out after 20 seconds. Check your connection and try again.")),20000)})
-  ]);
- }finally{clearTimeout(timer)}
- if(seq!=loadSeq)return seq;
- const{pr,s,o,c,pe}=data;
- CT=must(c)||[];
- P=(must(pr)||[]).map(x=>({...x,variants:(x.variants||[]).sort((a,b)=>a.id-b.id)}));
- O=(o||[]).map(x=>({...x,ts:+new Date(x.created_at),total:+x.total,pay_amount:x.pay_amount==null?null:+x.pay_amount,order_items:(x.order_items||[]).sort((a,b)=>a.id-b.id)}));
- ST={};(must(s)||[]).forEach(r=>ST[r.key]=r.value);
- PE_ERROR=pe.error?pe.error.message:"";PE=pe.error?[]:pe.data||[];
- DU={};O.forEach(x=>{if(x.utr&&live(x)){const k=x.utr.toLowerCase();DU[k]=(DU[k]||0)+1}});
- lastLoaded=Date.now();badge();return seq}
-/* Products and categories only: much faster than a full reload after saving an item */
-const PSEL=(v,x)=>sb.from("products").select("id,name,type,active,category_id,image,customizable"+(x||"")+",variants("+v+")").order("id");
-const PCOLS=["id,name,price,stock,print_price,code,min_qty","id,name,price,stock,print_price,code","id,name,price,stock"];
-/* Tries the newest column set first and falls back, so the page still works before the SQL is run */
-async function fetchP(){let r;for(const x of [",description,images",""]){for(let i=0;i<3;i++){r=await PSEL(PCOLS[i],x);if(!r.error){NOMQ=i>0;NOINV=i>1;NODET=!x;return r}const m=r.error.message;if(x&&/description|images/i.test(m))break;if(!/print_price|code|min_qty|column/i.test(m))return r}}return r}
-const NOSZ="Each",ln=(a,b)=>b==NOSZ?a:a+" – "+b,single=t=>t=="sticker"||t=="polaroid"||t=="uno";
-let NOMQ=false,NODET=false;
-async function loadP(){const[pr,c]=await Promise.all([fetchP(),sb.from("categories").select("*").order("position").order("id")]);CT=must(c)||[];P=(must(pr)||[]).map(x=>({...x,variants:(x.variants||[]).sort((a,b)=>a.id-b.id)}))}
-let LIGHT=false;
-const flags=o=>{const f=[];if(o.utr&&live(o)&&DU[o.utr.toLowerCase()]>1)f.push("Duplicate UTR");if(o.pay_amount!=null&&Math.abs(o.pay_amount-o.total)>=1)f.push("Amount differs");return f};
-const badge=()=>{const n=O.filter(unv).length;document.title=(n?`(${n}) `:"")+"theoneanother – Admin";const c=document.querySelector("#sb [data-v=ord] .cnt");if(c){c.textContent=n;c.hidden=!n}};
-const wa=(t,n)=>`https://wa.me/${n||WA()}?text=${encodeURIComponent(t)}`;
-const ph=p=>{let d=String(p).replace(/\D/g,"");if(d.length==11&&d[0]=="0")d=d.slice(1);return d.length==10?"91"+d:d};
-const win=(a,b)=>O.filter(o=>o.ts>=a&&o.ts<b&&live(o)),units=o=>o.order_items.reduce((x,i)=>x+i.qty,0);
-const sum=l=>({n:l.length,u:l.reduce((a,o)=>a+units(o),0),r:l.filter(o=>o.paid).reduce((a,o)=>a+o.total,0),p:l.filter(o=>!o.paid).length});
-const lowList=()=>P.filter(p=>p.active).flatMap(p=>p.variants.filter(v=>v.stock<=low()).map(v=>({t:ln(p.name,v.name),s:v.stock})));
-const stB=s=>s<=0?'<span class="bd bad">Out of stock</span>':s<=low()?'<span class="bd lo">Low</span>':'<span class="bd ok">In stock</span>';
-const cell=v=>{v=String(v??"");if(/^(=|@|\t|\r|[+\-](?![\d ]))/.test(v))v="'"+v;return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-const dl=(name,rows)=>{const b=new Blob(["\ufeff"+rows.map(r=>r.map(cell).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
-const ordRows=l=>[["Order","Date","Customer","Phone","Email","Address","Items","Total","Payment verified","UTR","Status","Courier","Tracking","Source","Refunded","Razorpay payment ID"],...l.map(o=>[o.number,new Date(o.ts).toISOString().slice(0,10),o.customer_name,o.phone,o.email||"",o.address,o.order_items.map(i=>i.product_name+" "+i.variant_name+" x"+i.qty).join("; "),o.total,o.paid?"yes":"no",o.utr||"",o.status,o.courier||"",o.tracking||"",o.source||"",o.refunded?"yes":"no",o.razorpay_payment_id||""])];
-/* ---------- login / account ---------- */
-function showLogin(msg,ok){if(!sb){$("login").hidden=false;$("app").hidden=true;$("login").innerHTML=`<div class="box"><div class="logo" style="font-size:28px">theoneanother</div><p>${msg?`<b style="color:var(--bad)">${esc(msg)}</b>`:"Setup needed: open this file and paste your Supabase URL and anon key into <b>CFG</b> near the top of the script."}</p></div>`;return}
- $("login").hidden=false;$("app").hidden=true;$("login").innerHTML=`<form id="lf"><div class="logo" style="font-size:30px">theoneanother</div><p class="mut">Admin login ${msg?`<br><b style="color:var(${ok?"--ok":"--bad"})">${esc(msg)}</b>`:""}</p><input id="lu" type="email" placeholder="Email" autocomplete="username" required><input id="lp" type="password" placeholder="Password" autocomplete="current-password" required><button class="pri" style="padding:11px">Login</button></form>`;
- $("lf").onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector(".pri");b.disabled=true;try{const r=await sb.auth.signInWithPassword({email:$("lu").value.trim(),password:$("lp").value});b.disabled=false;if(r.error)return toast(/invalid login credentials/i.test(r.error.message)?"Wrong email or password":r.error.message);await enter()}catch(err){b.disabled=false;toast(err&&err.message||"Login failed")}}}
-function acct(){const dg=$("dg");dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">Change my password</h3><button class="sm" id="x">Close</button></div><form class="f" id="pf" style="margin-top:12px"><input id="p1" type="password" placeholder="New password (8+ characters)" minlength="8" autocomplete="new-password" required><input id="p2" type="password" placeholder="Repeat new password" minlength="8" autocomplete="new-password" required><button class="pri" style="padding:10px">Update password</button></form>`;
- $("x").onclick=()=>dg.close();$("pf").onsubmit=async e=>{e.preventDefault();if($("p1").value!=$("p2").value)return toast("Passwords do not match");const r=await sb.auth.updateUser({password:$("p1").value});if(r.error)return toast(r.error.message);dg.close();toast("Password updated")};dg.showModal()}
-async function enter(){try{const ur=await sb.auth.getUser();if(ur.error)return showLogin(ur.error.message);const u=ur.data&&ur.data.user;if(!u)return showLogin();const prRes=await sb.from("profiles").select("name,role").eq("id",u.id).maybeSingle();if(prRes.error)return showLogin(prRes.error.message);const pr=prRes.data;if(!pr){await sb.auth.signOut();return showLogin("This account has no staff access.")}me=pr;
- const ok=await run(load);if(ok===null&&!P.length&&!O.length&&!Object.keys(ST).length){me=null;return showLogin("Could not load data. Check your connection and try again.")}
- $("login").hidden=true;$("app").hidden=false;view=routeView();R()}catch(e){me=null;showLogin(e&&e.message||"Could not sign in. Please try again.")}}
-function nav(){const own=me.role=="owner",cur=view=="nw"?"ord":view,T=[["dash","Dashboard","dash"],["ord","Orders","ord"],["cus","Customers","cus"],["items","Items","stock"],["sales","Sales","sales"]];if(own)T.push(["recov","Cart Recovery","ord"],["rep","Reports","rep"],["revs","Reviews","act"],["tags","Hashtags","sales"],["gal","Gallery","prod"],["home","Home Content","prod"]);
- const B=t=>`<button class="nv ${cur==t[0]?"on":""}" data-v="${t[0]}">${ic(t[2])} ${t[1]}${t[0]=="ord"?'<span class="cnt" hidden></span>':""}</button>`;
- $("sb").innerHTML=`<div class="logo">theoneanother</div><div class="sec">GENERAL</div>${T.map(B).join("")}${own?`<div class="sec">SYSTEM</div>${[["act","Activity","act"],["set","Settings","set"]].map(B).join("")}`:""}<button class="nv bot" id="pw">${ic("key")} Password</button><button class="nv bot" id="lo">${ic("out")} Logout (${esc(me.name||me.role)})</button>`;
- $("sb").onclick=async e=>{const b=e.target.closest("button");if(!b)return;if(b.id=="lo"){me=null;await sb.auth.signOut();return showLogin()}if(b.id=="pw")return acct();if(b.dataset.v=="items")selV=null;go(b.dataset.v)};badge()}
-const OWNER_VIEWS=["recov","rep","revs","tags","gal","home","act","set"];
-function R(){try{if(!me)return;if(me.role!="owner"&&OWNER_VIEWS.includes(view)){view="dash";location.hash="dash"}nav();const m=$("mn");m.onclick=null;m.onchange=null;m.oninput=null;m.onkeydown=null;({dash,ord,nw,cus,items,sales,rep,revs,tags,gal,home:homeContent,act:actv,set,recov:window.recov})[view](m)}catch(e){toast(e&&e.message||"View failed to render")}}
-const reload=async()=>{dashLoading=true;if(view=="dash")R();const request=load(),seq=loadSeq;try{await request;if(seq!=loadSeq)return false;dashError="";return true}catch(e){if(seq!=loadSeq)return false;dashError=e&&e.message||"Could not refresh dashboard data.";toast(dashError);return false}finally{if(seq==loadSeq){dashLoading=false;R()}}};
-/* ---------- shared pieces ---------- */
-const PN={d:"Daily",w:"Weekly",m:"Monthly",y:"Yearly"},PL2={d:"Today",w:"Last 7 days",m:"This month",y:"This year"},CL2={d:"Last 7 days",w:"Last 8 weeks",m:"Last 6 months",y:"This year"};
-const pSel=(id,v,all)=>`<select id="${id}" style="width:auto" aria-label="Period">${Object.entries(PN).map(([k,n])=>`<option value="${k}" ${v==k?"selected":""}>${n}</option>`).join("")}${all?`<option value="a" ${v=="a"?"selected":""}>All time</option>`:""}</select>`;
-const salesPeriods={7:"Last 7 days",30:"Last 1 month",120:"Last 4 months",180:"Last 6 months",365:"Last 1 year"};
-const salesPeriodSelect=(id,v)=>`<select id="${id}" style="width:auto" aria-label="Sales report period">${Object.entries(salesPeriods).map(([k,n])=>`<option value="${k}" ${v==k?"selected":""}>${n}</option>`).join("")}</select>`;
-const salesRange=p=>{const n=new Date(),end=t0()+D,months=+p&&[30,120,180,365].includes(+p)?+p/30:0;if(months)return[+new Date(n.getFullYear(),n.getMonth()-months,n.getDate(),0,0,0,0),end];if(+p==7)return[t0()-6*D,end];return[t0()-364*D,end]};
-const salesBuckets=p=>{const[a,b]=salesRange(p),count=+p==7?7:+p==30?5:+p==120?4:+p==180?6:12;return Array.from({length:count},(_,i)=>{const x=Math.round(a+(b-a)*i/count),y=Math.round(a+(b-a)*(i+1)/count),d=new Date(x);return{l:d.toLocaleDateString("en-IN",+p==7?{weekday:"short"}:{day:"numeric",month:"short"}),a:x,b:y}})};
-const prange=p=>{const n=new Date(),t=t0();if(p=="d")return[t,t+D];if(p=="w")return[t-6*D,t+D];if(p=="m")return[+new Date(n.getFullYear(),n.getMonth(),1),+new Date(n.getFullYear(),n.getMonth()+1,1)];if(p=="y")return[+new Date(n.getFullYear(),0,1),+new Date(n.getFullYear()+1,0,1)];return[0,Infinity]};
-const buck=p=>{const f=(s,o)=>new Date(s).toLocaleDateString("en-IN",o),r=[],t=t0(),n=new Date();
- if(p=="d")for(let i=6;i>=0;i--){const s=t-i*D;r.push({l:f(s,{weekday:"short"}),a:s,b:s+D})}
- if(p=="w")for(let i=7;i>=0;i--){const e=t+D-i*7*D;r.push({l:f(e-7*D,{day:"numeric",month:"short"}),a:e-7*D,b:e})}
- if(p=="m")for(let i=5;i>=0;i--){const s=new Date(n.getFullYear(),n.getMonth()-i,1),e=new Date(n.getFullYear(),n.getMonth()-i+1,1);r.push({l:f(s,{month:"short"}),a:+s,b:+e})}
- if(p=="y")for(let i=0;i<12;i++){const s=new Date(n.getFullYear(),i,1),e=new Date(n.getFullYear(),i+1,1);r.push({l:f(s,{month:"short"}),a:+s,b:+e})}
- return r};
-const warn=()=>NOINV?'<div class="warn">Database update needed: run inventory.sql in Supabase, then refresh this page. Printing price and stock history will not work until then.</div>':"";
-const hdr=(t,r)=>`<div class="pgh"><h1>${t}</h1><div class="row">${r||""}</div></div>${warn()}`;
-const sumT=l=>l.reduce((a,o)=>a+o.total,0);
-const area=pts=>{const W=640,H=210,L=60,Rr=16,T=14,B=30,mx=Math.max(1,...pts.map(p=>p.v)),x=i=>L+(W-L-Rr)*i/Math.max(1,pts.length-1),y=v=>H-B-(H-B-T)*v/mx;
- const line=pts.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(p.v).toFixed(1)).join(" ");
- return`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img" aria-label="Sales chart"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22c55e" stop-opacity=".35"/><stop offset="1" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>${[0,.5,1].map(f=>`<line x1="${L}" x2="${W-Rr}" y1="${y(mx*f)}" y2="${y(mx*f)}" stroke="#e2e8f0"/><text x="${L-8}" y="${y(mx*f)+4}" font-size="10" text-anchor="end" fill="#64748b">${inr(Math.round(mx*f))}</text>`).join("")}<path d="${line} L${x(pts.length-1)} ${H-B} L${x(0)} ${H-B} Z" fill="url(#ag)"/><path d="${line}" fill="none" stroke="#16a34a" stroke-width="2.5"/>${pts.map((p,i)=>`<text x="${x(i)}" y="${H-10}" font-size="10" text-anchor="middle" fill="#64748b">${esc(p.l)}</text>`).join("")}</svg>`};
-function printTable(title,head,rows,foot){const w=window.open("","_blank");if(!w)return toast("Please allow pop-ups to print");w.document.write(`<!doctype html><meta charset="utf-8"><title>${esc(title)}</title><style>body{font:14px Arial,sans-serif;margin:24px;color:#000}h1{font-size:20px}table{width:100%;border-collapse:collapse;margin-top:12px}td,th{border-bottom:1px solid #999;padding:6px;text-align:left}th{background:#eee}</style><h1>${esc(ST.shop_name||"theoneanother")} – ${esc(title)}</h1>${foot||""}<table><tr>${head.map(h=>`<th>${esc(h)}</th>`).join("")}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`);w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(e){}},300)}
-/* ---------- dashboard ---------- */
-function dash(m){const[a,b]=prange(dper),l=win(a,b),rcv=sumT(l.filter(o=>o.paid)),pend=O.filter(unv),cf=O.filter(o=>o.status=="confirmed"),tr=O.filter(o=>o.status=="shipped"),rf=O.filter(o=>o.status=="cancelled"&&o.paid&&!o.refunded),lw=lowList();
- const[sa,sb]=salesRange(dashReportPeriod),bk=salesBuckets(dashReportPeriod),reportOrders=O.filter(o=>o.ts>=sa&&o.ts<sb&&live(o)),pts=bk.map(k=>({l:k.l,v:sumT(O.filter(o=>o.ts>=k.a&&o.ts<k.b&&live(o)))})),tot=sumT(reportOrders),cnt=reportOrders.length;
- const C=(cls,lab,val,sub,go)=>`<div class="stat ${cls} ${go?"go":""}" ${go?`role="button" tabindex="0" data-go="${go}"`:""}><span>${lab}</span><b>${val}</b><small>${sub||"&nbsp;"}</small></div>`;
- const NT=[["confirmed","Confirmed: to print and ship",cf.length],["shipped","On the way",tr.length],["refund","Refunds to send",rf.length],["low","Low or out of stock",lw.length],...(PE.length?[["rzperr","Paid online, no order: refund",PE.length]]:[])];
- const dw=[PE_ERROR&&`Razorpay payment failures could not be loaded: ${PE_ERROR}`].filter(Boolean);
- m.innerHTML=`${hdr("Dashboard")}${dashError?`<div class="warn" role="alert">Refresh failed: ${esc(dashError)}. Previously loaded values are shown; retry when the connection is available.</div>`:""}${dw.map(x=>`<div class="warn" role="alert">${esc(x)}</div>`).join("")}<div class="row" style="justify-content:space-between;margin:0 0 14px"><b style="font-size:17px">Business Overview</b><div class="row">${pSel("dp",dper)}<span class="mut">Last updated: ${lastLoaded?fdt(lastLoaded):"Not loaded"}</span><button class="sm" id="rf" ${dashLoading?"disabled":""}>${dashLoading?"Refreshing…":"Refresh"}</button></div></div>
-<div class="cards4">${C("g","Amount Received · "+PL2[dper],inr(rcv),"Verified payments")}${C("b","Orders · "+PL2[dper],l.length,"Placed in this period")}${C("r","Unpaid orders",pend.length,inr(sumT(pend))+" not paid","unverified")}</div>
-<div class="dash-content"><div class="pan tbl w" id="dash-latest"><div class="ph2">Latest Transactions</div><div class="w"><table><tr><th>Date</th><th>Type</th><th>Order no</th><th>Party name</th><th>Amount</th></tr>${O.slice(0,5).map(o=>`<tr class="cl" data-o="${esc(o.number)}"><td>${fd(o.ts)}</td><td>${o.status=="cancelled"?"Cancelled order":"Sales order"}</td><td>${esc(o.number)}</td><td>${esc(o.customer_name)}</td><td>${inr(o.total)}</td></tr>`).join("")||'<tr><td colspan="5" class="mut">No orders yet.</td></tr>'}</table></div><p class="center"><a href="#sales">See All Transactions</a></p></div>
-<div class="dash-split"><div class="pan"><div class="ph2">Needs your attention</div>${NT.map(x=>`<div class="nt go" role="button" tabindex="0" data-go="${x[0]}"><span>${x[1]}</span><b>${x[2]}</b></div>`).join("")}${lw.length?`<p style="margin-top:12px"><a class="btn pri sm" target="_blank" rel="noopener" href="${wa("Low stock alert:\n"+lw.map(x=>x.t+": "+x.s).join("\n"))}">Send WhatsApp alert</a></p>`:""}</div>
-<div class="pan"><div class="ph2 row" style="justify-content:space-between"><span>Sales Report · ${salesPeriods[dashReportPeriod]}</span>${salesPeriodSelect("dashSalesPeriod",dashReportPeriod)}</div><div class="chartbox"><div>${area(pts)}</div><div class="side"><span>${salesPeriods[dashReportPeriod]} sales</span><b>${inr(tot)}</b><span>Orders made</span><b>${cnt}</b></div></div></div></div></div>`;
- $("dp").onchange=e=>{dper=e.target.value;dash(m)};$("dashSalesPeriod").onchange=e=>{dashReportPeriod=+e.target.value;dash(m)};$("rf").onclick=reload;
- const g=e=>{const c=e.target.closest("[data-go]");if(c){const k=c.dataset.go;if(k=="rzperr")rzDlg();else if(k=="low"){ilow=true;iq="";icat="all";selV=null;go("items")}else{fs=k;fr="all";q="";pg=1;go("ord")}return}const r=e.target.closest("tr[data-o]");if(r)openO(r.dataset.o)};
- m.onclick=g;m.onkeydown=e=>{if(e.key=="Enter")g(e)}}
-/* ---------- orders ---------- */
-const FS=[["all","All orders"],["unverified","Unpaid"],["stale","Unpaid over 24 hours"],["pending","Pending (not confirmed)"],["confirmed","Confirmed"],["shipped","Shipped"],["delivered","Delivered"],["cancelled","Cancelled"],["refund","Refund to send"]];
-const FR=[["all","All time"],["1","Today"],["7","Last 7 days"],["30","Last 30 days"]];
-const ofl=o=>{if(fs=="unverified"&&!unv(o))return 0;if(fs=="stale"&&!stale(o))return 0;if(["pending","confirmed","shipped","delivered","cancelled"].includes(fs)&&o.status!=fs)return 0;if(fs=="refund"&&!(o.status=="cancelled"&&o.paid&&!o.refunded))return 0;if(fr!="all"&&o.ts<t0()-(+fr-1)*D)return 0;
- if(q&&![o.number,o.customer_name,o.phone,o.email,o.utr,o.tracking,o.razorpay_payment_id].join(" ").toLowerCase().includes(q.toLowerCase()))return 0;return 1};
-function ord(m){const l=O.filter(ofl),sh=l.slice(0,pg*50);
- m.innerHTML=`${hdr("Orders",'<a class="btn pri" href="#nw">Create order</a>')}<div class="row" style="margin:0 0 14px"><input id="sq" placeholder="Search order, name, phone, UTR or tracking" value="${esc(q)}" style="max-width:320px"><select id="sf" style="width:auto">${FS.map(x=>`<option value="${x[0]}" ${fs==x[0]?"selected":""}>${x[1]}</option>`).join("")}</select><select id="sr" style="width:auto">${FR.map(x=>`<option value="${x[0]}" ${fr==x[0]?"selected":""}>${x[1]}</option>`).join("")}</select><button class="sm" id="ex">Download CSV (${l.length})</button></div>
-<div class="pan tbl w"><table><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th></tr>${sh.map(o=>`<tr class="cl" data-o="${esc(o.number)}"><td>${esc(o.number)}<br><span class="mut">${fd(o.ts)}</span></td><td>${esc(o.customer_name)}<br><span class="mut">${esc(o.phone)}</span></td><td>${o.order_items.map(i=>esc(i.product_name)+" × "+i.qty).join(", ")}</td><td>${inr(o.total)}</td><td>${o.paid?'<span class="bd ok">Verified</span>':'<span class="bd lo">Unverified</span>'}${o.razorpay_payment_id?' <span class="bd">Online</span>':""}${stale(o)?' <span class="bd wr">24h+</span>':""}${live(o)?flags(o).map(f=>` <span class="bd bad">${f}</span>`).join(""):""}${o.status=="cancelled"&&o.paid?(o.refunded?' <span class="bd ok">Refunded</span>':' <span class="bd bad">Refund due</span>'):""}</td><td><span class="bd ${o.status=="cancelled"?"bad":""}">${o.status}</span></td></tr>`).join("")||'<tr><td colspan="6" class="mut">No orders match.</td></tr>'}</table></div>${l.length>sh.length?`<p style="margin-top:12px"><button id="mr">Show more (${l.length-sh.length} left)</button></p>`:""}`;
- $("sq").oninput=e=>{q=e.target.value;pg=1;const p=e.target.selectionStart;ord(m);$("sq").focus();$("sq").setSelectionRange(p,p)};
- $("sf").onchange=e=>{fs=e.target.value;pg=1;ord(m)};$("sr").onchange=e=>{fr=e.target.value;pg=1;ord(m)};
- $("ex").onclick=()=>dl("orders-"+new Date().toISOString().slice(0,10)+".csv",ordRows(l));
- m.onclick=e=>{if(e.target.id=="mr"){pg++;ord(m);return}const r=e.target.closest("tr[data-o]");if(r)openO(r.dataset.o)}}
-const notify=async(o,ev)=>{try{const r=await sb.functions.invoke("notify-order",{body:{number:o.number,event:ev}});if(r.error)return" · notification failed: "+(r.error.message||"notify-order request failed");const d=r.data||{},sent=[d.whatsapp&&"WhatsApp",d.email&&"email"].filter(Boolean),failed=[d.whatsapp_error&&"WhatsApp: "+d.whatsapp_error,d.email_error&&"email: "+d.email_error].filter(Boolean);if(sent.length&&failed.length)return" · sent by "+sent.join(" and ")+"; failed: "+failed.join("; ");if(sent.length)return" · customer notified by "+sent.join(" and ");if(failed.length)return" · notification failed: "+failed.join("; ");if(d.skipped)return" · notification skipped"+(d.reason?": "+d.reason:"");return" · notification status unavailable: "+(d.error||"the service returned no delivery result")}catch(e){return" · notification failed: "+(e&&e.message||"network or server error")}};
-const upd=async(o,f,msg)=>{try{let query=sb.from("orders").update(f).eq("id",o.id);for(const k of Object.keys(f))query=o[k]==null?query.is(k,null):query.eq(k,o[k]);const r=await query.select("id");if(r.error)throw r.error;if(!r.data||!r.data.length){const latest=await sb.from("orders").select("*").eq("id",o.id).maybeSingle();if(latest.error)throw latest.error;if(latest.data&&Object.keys(f).some(k=>latest.data[k]!==o[k]))throw new Error("This order changed after it was opened. The latest order details have been reloaded; review them before trying again.");throw new Error("Order update was not saved. Check your permissions and try again.")}}catch(e){toast(e.message);if(/changed after it was opened/i.test(e.message)){if(await reload())openO(o.number,1)}return false}const ev=f.status?"status":("tracking" in f||"courier" in f)?"tracking":f.refunded===true?"refund":"";const nt=ev?await notify(o,ev):"";const refreshed=await reload();toast(msg+nt+(refreshed?"":" · saved, but the latest data could not be refreshed"));if(refreshed)openO(o.number,1);return true};
-function slip(o){const w=window.open("","_blank");if(!w)return toast("Please allow pop-ups to print");
- const h=`<!doctype html><meta charset="utf-8"><title>${esc(o.number)}</title><style>body{font:14px Arial,sans-serif;margin:24px;color:#000}h1{font-size:20px;margin:0}.b{border:2px solid #000;padding:14px;margin:12px 0}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #999;padding:6px;text-align:left;vertical-align:top}small{color:#444}</style>
-<h1>${esc(ST.shop_name||"theoneanother")} · ${esc(o.number)}</h1><small>${esc(ST.shop_addr||"")} ${esc(ST.shop_phone||"")}</small>
-<div class="b"><small>SHIP TO</small><div style="font-size:18px;font-weight:bold">${esc(o.customer_name)}</div><div style="font-size:16px;white-space:pre-line">${esc(o.address)}</div><div style="font-size:16px">Phone: ${esc(o.phone)}</div></div>
-<table><tr><th>Item</th><th>Qty</th><th>Print note</th></tr>${o.order_items.map(i=>`<tr><td>${esc(ln(i.product_name,i.variant_name))}</td><td>${i.qty}</td><td>${esc(i.note||"")}</td></tr>`).join("")}</table>
-${o.note?`<p><b>Order note:</b> ${esc(o.note)}</p>`:""}${o.tracking?`<p><b>Courier:</b> ${esc(o.courier||"")} <b>Tracking:</b> ${esc(o.tracking)}</p>`:""}<p><small>Printed ${esc(fdt(Date.now()))}</small></p>`;
- w.document.write(h);w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(e){}},300)}
-function invoice(o){const w=window.open("","_blank");if(!w)return toast("Please allow pop-ups to print");const rec=o.paid&&o.status!="cancelled"?o.total:0;
- w.document.write(`<!doctype html><meta charset="utf-8"><title>${esc(o.number)}</title><style>body{font:14px Arial,sans-serif;margin:28px;color:#000;max-width:720px}h2{margin:0}.r{text-align:right}table{width:100%;border-collapse:collapse;margin:14px 0}th{background:#ddd;padding:8px;text-align:left}td{padding:6px 8px}.tot td{border-top:1px solid #000}small{color:#444}</style>
-<div style="display:flex;justify-content:space-between"><div><h2>${esc(ST.shop_name||"theoneanother")}</h2><small>${esc(ST.shop_addr||"")}<br>Mobile: ${esc(ST.shop_phone||"")}</small></div><div class="r"><b>BILL OF SUPPLY</b><br>Invoice No.: ${esc(o.number)}<br>Date: ${new Date(o.ts).toLocaleDateString("en-IN")}</div></div>
-<p><b>BILL TO</b><br>${esc(o.customer_name)}<br>Mobile: ${esc(o.phone)}<br><small style="white-space:pre-line">${esc(o.address)}</small></p>
-<table><tr><th>S.NO.</th><th>ITEMS</th><th class="r">QTY.</th><th class="r">RATE</th><th class="r">AMOUNT</th></tr>${o.order_items.map((i,k)=>`<tr><td>${k+1}</td><td>${esc(ln(i.product_name,i.variant_name))}</td><td class="r">${i.qty} PCS</td><td class="r">${i.price}</td><td class="r">${i.price*i.qty}</td></tr>`).join("")}<tr class="tot"><td></td><td><b>Total Amount</b></td><td></td><td></td><td class="r"><b>₹ ${o.total}</b></td></tr><tr><td></td><td>Received Amount</td><td></td><td></td><td class="r">₹ ${rec}</td></tr><tr><td></td><td><b>Balance</b></td><td></td><td></td><td class="r"><b>₹ ${o.status=="cancelled"?0:o.total-rec}</b></td></tr></table><script>setTimeout(function(){print()},300)<\/script>`);w.document.close()}
-async function openO(num,keep){const o=O.find(x=>x.number==num);if(!o)return;const dg=$("dg"),sc=keep?dg.scrollTop:0,own=me.role=="owner";
- const files=o.order_items.map(i=>i.photos||[]),all=files.flat(),U={};
- if(all.length){const r=await sb.storage.from("order-photos").createSignedUrls(all,3600);if(r.data)r.data.forEach(x=>{if(x.signedUrl)U[x.path]=x.signedUrl})}
- const pho=k=>files[k].length?`<div class="ph">${files[k].map(p=>{const n=p.split("/").pop();return U[p]?`<a href="${esc(U[p])}" target="_blank" rel="noopener" ${/\.(jpe?g|png)$/i.test(n)?'data-img="1"':""}>${esc(n)}</a>`:`<span class="mut">${esc(n)} (unavailable)</span>`}).join("<br>")}</div>`:"";
- const fl=live(o)?flags(o):[],tl=[["Placed",o.ts],["Paid",o.paid_at],["Shipped",o.shipped_at],["Delivered",o.delivered_at],["Cancelled",o.cancelled_at]].filter(x=>x[1]).map(x=>`${x[0]}: ${fdt(x[1])}`).join("<br>");
- const stp=o.status=="cancelled"?'<p><span class="bd bad">cancelled</span></p>':`<div class="stp">${["pending","confirmed","shipped","delivered"].map((s,k,a)=>`<span class="${k<=a.indexOf(o.status)?"on":""}">${s}</span>`).join("")}</div>`;
- dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">${esc(o.number)}</h3><button class="sm" id="x">Close</button></div><p class="mut">${fdt(o.ts)} · ${esc(o.source||"")}</p>${stp}
-<h3>Customer <button class="sm" id="ecb" style="margin-left:8px">Edit</button></h3><p id="cv">${esc(o.customer_name)}<br>${esc(o.phone)}${o.email?" · "+esc(o.email):""}<br><span class="mut" style="white-space:pre-line">${esc(o.address)}</span></p>
-<form class="f" id="ec" hidden><input id="cn" value="${esc(o.customer_name)}" required maxlength="100"><input id="cp" value="${esc(o.phone)}" required pattern="[0-9+ ]{10,15}"><input id="ce" type="email" value="${esc(o.email||"")}" maxlength="200"><textarea id="ca" rows="3" required maxlength="500">${esc(o.address)}</textarea><div class="row"><button class="pri">Save details</button><button type="button" id="ecx">Cancel</button></div></form>
-<h3>Items</h3>${o.order_items.map((i,k)=>`<p>${esc(ln(i.product_name,i.variant_name))} × ${i.qty} · ${inr(i.price*i.qty)}${i.note?`<br><span class="mut">Print note: ${esc(i.note)}</span>`:""}</p>${pho(k)}`).join("")}${all.length?'<p><button class="sm" id="pv2" style="margin-top:6px">Show image previews</button></p>':""}${o.note?`<h3>Order note</h3><p class="mut">${esc(o.note)}</p>`:""}
-<h3>Payment</h3><p>Total <b>${inr(o.total)}</b>${o.pay_amount!=null?` · customer paid ₹${o.pay_amount.toFixed(2)}`:""}<br><span class="mut">${o.razorpay_payment_id?"Razorpay payment "+esc(o.razorpay_payment_id)+(o.razorpay_order_id?" · order "+esc(o.razorpay_order_id):""):"UTR "+esc(o.utr||"–")}</span>${fl.map(f=>` <span class="bd bad">${f}</span>`).join("")}</p>${fl.includes("Duplicate UTR")?'<p class="mut">Another live order uses this UTR. Check your UPI app carefully.</p>':""}
-${o.status=="cancelled"?(o.paid?`${own?`<label class="row"><input type="checkbox" id="rf" style="width:auto" ${o.refunded?"checked":""}> Refund sent to the customer</label>`:`<p><span class="bd ${o.refunded?"ok":"bad"}">${o.refunded?"Refund recorded":"Refund due"}</span></p>`}<p class="mut">${o.razorpay_payment_id?"This order was paid online and then cancelled. Refund it in the Razorpay dashboard (Payments, open the payment), then record it here.":"This order was paid and then cancelled. Send the refund from your UPI app, then record it here."}</p>`:'<p class="mut">Cancelled. Stock was put back.</p>'):`<p><span class="bd ${o.paid?"ok":"wr"}">${o.paid?"Paid · verified automatically by Razorpay":"Awaiting online payment"}</span></p>`}
-${o.status=="cancelled"?"":`<h3>Status</h3><select id="ss">${["pending","confirmed","shipped","delivered"].map(s=>`<option ${o.status==s?"selected":""}>${s}</option>`).join("")}</select>`}
-<h3>Courier and tracking</h3><div class="row"><input id="co" placeholder="Courier" value="${esc(o.courier||"")}" maxlength="60" style="flex:1;min-width:130px"><input id="tk" placeholder="Tracking number" value="${esc(o.tracking||"")}" maxlength="100" style="flex:2;min-width:160px"><button class="sm" id="tks">Save</button></div>
-<h3>Internal note (customers never see this)</h3><textarea id="an" rows="2" maxlength="1000">${esc(o.admin_note||"")}</textarea><p style="margin-top:6px"><button class="sm" id="ans">Save note</button></p>
-${tl?`<h3>Timeline</h3><p class="mut">${tl}</p>`:""}
-<div class="row" style="margin-top:16px"><a class="btn pri" target="_blank" rel="noopener" href="${wa(`Hi ${o.customer_name}, this is theoneanother about order ${o.number}. Please share your photos here so we can confirm before printing.`,ph(o.phone))}">WhatsApp customer</a>${["shipped","delivered"].includes(o.status)?`<a class="btn" target="_blank" rel="noopener" href="${wa(`Hi ${o.customer_name}, your theoneanother order ${o.number} has been shipped${o.courier?" via "+o.courier:""}.${o.tracking?" Tracking number: "+o.tracking+".":""} Thank you!`,ph(o.phone))}">Send shipping update</a>`:""}<button id="pr">Print slip</button><button id="pi">Print invoice</button>${["pending","confirmed"].includes(o.status)?'<button class="sm dng" id="cx">Cancel order</button>':""}</div>
-${own?`<div class="row" style="margin-top:14px">${all.length&&["delivered","cancelled"].includes(o.status)?'<button class="sm" id="cp2">Delete photos (free up space)</button>':""}${o.status=="cancelled"?'<button class="sm dng" id="dl2">Delete this order</button>':""}</div>`:""}`;
- $("x").onclick=()=>dg.close();
- $("ecb").onclick=()=>{$("ec").hidden=false;$("cv").hidden=true;$("ecb").hidden=true};$("ecx").onclick=()=>{$("ec").hidden=true;$("cv").hidden=false;$("ecb").hidden=false};
- $("ec").onsubmit=e=>{e.preventDefault();upd(o,{customer_name:$("cn").value.trim(),phone:$("cp").value.trim(),email:$("ce").value.trim()||null,address:$("ca").value.trim()},"Customer details saved")};
- if($("pv2"))$("pv2").onclick=e=>{dg.querySelectorAll("a[data-img]").forEach(a=>{if(!a.dataset.sh){a.dataset.sh=1;a.insertAdjacentHTML("afterend",`<br><img src="${esc(a.href)}" alt="" loading="lazy" style="max-width:100%;max-height:220px;width:auto;border-radius:8px;margin:6px 0">`)}});e.target.hidden=true};
- if($("rf"))$("rf").onchange=async e=>{const checked=e.target.checked;if(!await ask(`${checked?"Have you completed the refund":"Remove the refund record"} for order ${o.number} (${o.customer_name}, ${o.phone})?`,{ok:checked?"Yes, refund sent":"Remove record",danger:0})){e.target.checked=o.refunded;return}const ok=await upd(o,{refunded:checked},checked?"Refund recorded":"Refund unmarked");if(!ok)e.target.checked=o.refunded};
- if($("ss"))$("ss").onchange=async e=>{ const S=["pending","confirmed","shipped","delivered"],s=e.target.value,back=()=>{e.target.value=o.status};
-   const from=S.indexOf(o.status),to=S.indexOf(s),delta=to-from,valid=from>=0&&to>=0&&(delta==1||(me.role=="owner"&&delta==-1));if(!valid){back();return toast("Invalid status transition. Move one step at a time; only the owner can reverse one step.")}
-  if(!await ask(`Change order ${o.number} for ${o.customer_name} (${o.phone}) from ${o.status} to ${s}?`,{ok:"Yes, change status",danger:0})){back();return}
-  const ok=await upd(o,{status:s},"Status: "+s);if(!ok)back();else if(s=="shipped"&&!o.tracking)toast("Shipped. Add the tracking number if you have one.")};
- $("tks").onclick=()=>upd(o,{courier:$("co").value.trim()||null,tracking:$("tk").value.trim()||null},"Tracking saved");
- $("ans").onclick=()=>upd(o,{admin_note:$("an").value.trim()||null},"Note saved");
- $("pr").onclick=()=>slip(o);$("pi").onclick=()=>invoice(o);
- if($("cx"))$("cx").onclick=async()=>{if(!await ask(`Cancel order ${o.number} for ${o.customer_name} (${o.phone}) and put the stock back?${o.paid?"\n\nPayment was verified, so you will need to refund the customer.":""}`,{ok:"Yes, cancel order"}))return;const r=await sb.rpc("cancel_order",{oid:o.id});if(r.error)return toast(r.error.message);const nt=await notify(o,"cancelled"),refreshed=await reload();toast("Order cancelled, stock restored"+nt+(refreshed?"":" · latest data could not be refreshed"));if(refreshed)openO(num,1)};
- if($("cp2"))$("cp2").onclick=async()=>{if(!await ask("Permanently delete this order's customer photos? This cannot be undone.",{ok:"Delete photos"}))return;const r=await sb.storage.from("order-photos").remove(all);if(r.error)return toast(r.error.message);const c=await sb.rpc("clear_order_photos",{oid:o.id});if(c.error)return toast(c.error.message);await run(load);toast("Photos deleted");openO(num,1)};
- if($("dl2"))$("dl2").onclick=async()=>{if(!await ask("Permanently delete cancelled order "+o.number+" and its photos?",{ok:"Delete order"}))return;try{await wr(sb.from("orders").delete().eq("id",o.id).select("id"))}catch(e){return toast(e.message)}if(all.length)await sb.storage.from("order-photos").remove(all);dg.close();toast("Order deleted")};
- if(!dg.open)dg.showModal();dg.scrollTop=sc}
-/* ---------- new order ---------- */
-function nw(m){const vs=P.filter(p=>p.active).flatMap(p=>p.variants.filter(v=>v.stock>0).map(v=>({id:v.id,t:`${ln(p.name,v.name)} (${inr(v.price)}, ${v.stock} left)`,p:v.price,s:v.stock,n:p.name,vn:v.name})));
- const tot=()=>NL.reduce((a,l)=>a+l.p*l.q,0),inl=id=>NL.filter(l=>l.id==id).reduce((a,l)=>a+l.q,0),v_=k=>esc(ND[k]||"");
- m.innerHTML=`<h1>New order</h1><p class="mut" style="margin-top:6px">For orders that arrive on WhatsApp or by phone. Stock reduces automatically. Minimum order ${inr(minO())}.</p><form class="f" id="no" style="margin-top:14px"><input id="nn" placeholder="Customer name" required maxlength="100" value="${v_("nn")}"><input id="np" type="tel" placeholder="Phone" required pattern="[0-9+ ]{10,15}" value="${v_("np")}"><input id="ne" type="email" placeholder="Email (optional)" value="${v_("ne")}"><textarea id="na" rows="3" maxlength="500" placeholder="Delivery address with pincode" required>${v_("na")}</textarea>
-<div class="pan" style="margin:0"><div class="row"><select id="nv" style="flex:1;min-width:220px">${vs.map(v=>`<option value="${v.id}">${esc(v.t)}</option>`).join("")}</select><input id="nq" type="number" min="1" value="1" style="width:80px" aria-label="Quantity"></div><input id="nt" placeholder="Print note for this item (optional)" maxlength="500" style="margin-top:8px"><label class="mut" for="nf">Photos for this item (JPG, JPEG, PNG or PDF, up to 10, 50 MB each)</label><input id="nf" type="file" multiple accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"><button type="button" id="nadd" class="sm" style="margin-top:8px">Add item</button></div>
-<div id="nl">${NL.map((l,i)=>`<div class="row"><span style="flex:1">${esc(l.n)} · ${esc(l.vn)} × ${l.q} · ${inr(l.p*l.q)}<br><span class="mut">${l.files.length} photo(s)${l.note?" · "+esc(l.note):""}</span></span><button type="button" class="sm" data-r="${i}" aria-label="Remove item">×</button></div>`).join("")||'<p class="mut">No items added yet.</p>'}</div><p><b>Total ${inr(tot())}</b></p>
-<input id="nu" placeholder="UPI transaction ID (UTR)" value="${v_("nu")}"><input id="nm" type="number" step="0.01" min="0" placeholder="Amount paid ₹ (default: total)" value="${v_("nm")}"><textarea id="nz" rows="2" maxlength="500" placeholder="Order note (optional)">${v_("nz")}</textarea><label class="row"><input type="checkbox" id="nk" style="width:auto" ${ND.nk?"checked":""}> Payment already verified</label><button class="pri" id="ns" style="padding:11px">Create order</button></form>`;
- $("no").oninput=e=>{if(e.target.id&&!["nv","nq","nt","nf"].includes(e.target.id))ND[e.target.id]=e.target.type=="checkbox"?e.target.checked:e.target.value};
- $("np").onchange=()=>{const k=ph($("np").value).slice(-10);if(k.length<10)return;const o=O.find(x=>ph(x.phone).slice(-10)==k);if(o){if(!$("nn").value){$("nn").value=ND.nn=o.customer_name}if(!$("na").value){$("na").value=ND.na=o.address}if(!$("ne").value&&o.email){$("ne").value=ND.ne=o.email}}};
- $("nadd").onclick=()=>{const v=vs.find(x=>x.id==$("nv").value),qy=Math.max(1,Math.floor(+$("nq").value||1));if(!v)return toast("No items in stock");if(inl(v.id)+qy>v.s)return toast("Only "+v.s+" in stock");
-  const fl=[...$("nf").files];if(fl.length>10)return toast("Maximum 10 photos per item");const bad=fl.find(f=>!okF(f)||f.size>52428800);if(bad)return toast("Only JPG, JPEG, PNG or PDF up to 50 MB: "+bad.name);
-  NL.push({id:v.id,n:v.n,vn:v.vn,p:v.p,q:qy,files:fl,note:$("nt").value.trim()});nw(m)};
- $("nl").onclick=e=>{const r=e.target.dataset.r;if(r!=null){NL.splice(+r,1);nw(m)}};
- $("no").onsubmit=async e=>{e.preventDefault();if(!NL.length)return toast("Add at least one item");if(tot()<minO())return toast("Minimum order is "+inr(minO()));
-  const b=$("ns");b.disabled=true;const paths=[];
-  const num=await run(async()=>{const items=[];for(const l of NL){const ps=[];for(const f of l.files){const p="uploads/"+crypto.randomUUID()+"/"+f.name.replace(/[^\w.\-]/g,"_")+extOf(f),r=await sb.storage.from("order-photos").upload(p,f,{contentType:ctOf(f)});if(r.error)throw r.error;paths.push(p);ps.push(p)}items.push({variant_id:l.id,qty:l.q,note:l.note||null,photos:ps})}
-   const r=await sb.rpc("create_order",{p:{name:$("nn").value.trim(),phone:$("np").value.trim(),email:$("ne").value.trim(),address:$("na").value.trim(),pay_amount:$("nm").value||null,utr:$("nu").value.trim()||null,paid:$("nk").checked,source:"manual",note:$("nz").value.trim()||null,items}});if(r.error)throw r.error;return r.data});
-  b.disabled=false;
-  if(!num){if(paths.length)sb.storage.from("order-photos").remove(paths);return}
-  toast("Order "+num+" created");NL=[];ND={};await run(load);fs="all";fr="all";q="";pg=1;if(location.hash.slice(1)=="ord")R();else location.hash="ord";setTimeout(()=>openO(num),150)}}
-/* ---------- customers ---------- */
-function cus(m){const g={};O.forEach(o=>{if(!live(o))return;const k=ph(o.phone).slice(-10),c=g[k]||(g[k]={name:o.customer_name,phone:o.phone,email:o.email||"",n:0,u:0,s:0,due:0,last:0});c.n++;c.u+=units(o);if(o.paid)c.s+=o.total;else c.due+=o.total;if(o.ts>c.last){c.last=o.ts;c.name=o.customer_name;c.phone=o.phone;if(o.email)c.email=o.email}});
- const A=Object.values(g),L=A.filter(c=>!cq||(c.name+c.phone+c.email).toLowerCase().includes(cq.toLowerCase())).sort((a,b)=>b.s-a.s||b.last-a.last);
- m.innerHTML=`${hdr("Customers",'<button class="sm" id="ce2">Download CSV</button>')}<div class="cards2"><div class="stat b"><span>All Customers</span><b>${A.length}</b></div><div class="stat y"><span>Unpaid orders</span><b>${inr(A.reduce((x,c)=>x+c.due,0))}</b></div></div>
-<div class="row" style="margin:16px 0"><input id="cs" placeholder="Search name, phone or email" value="${esc(cq)}" style="max-width:300px"></div>
-<div class="pan tbl w"><table><tr><th>Customer name</th><th>Mobile number</th><th>Orders</th><th>Amount received</th><th>Balance</th><th>Last order</th><th></th></tr>${L.map(c=>`<tr><td>${esc(c.name)}${c.n>1?' <span class="bd ok">Repeat</span>':""}<br><span class="mut">${esc(c.email)}</span></td><td>${esc(c.phone)}</td><td>${c.n}</td><td>${inr(c.s)}</td><td>${inr(c.due)}</td><td>${fd(c.last)}</td><td><button class="sm" data-p="${esc(c.phone)}">Orders</button> <a class="btn sm" target="_blank" rel="noopener" href="${wa("Hi "+c.name+", this is theoneanother. ",ph(c.phone))}">WhatsApp</a></td></tr>`).join("")||'<tr><td colspan="7" class="mut">No customers yet.</td></tr>'}</table></div>`;
- $("cs").oninput=e=>{cq=e.target.value;const p=e.target.selectionStart;cus(m);$("cs").focus();$("cs").setSelectionRange(p,p)};
- $("ce2").onclick=()=>dl("customers.csv",[["Name","Phone","Email","Orders","Units","Amount received","Balance","Last order"],...L.map(c=>[c.name,c.phone,c.email,c.n,c.u,c.s,c.due,new Date(c.last).toISOString().slice(0,10)])]);
- m.onclick=e=>{const p=e.target.dataset.p;if(p){q=p;fs="all";fr="all";pg=1;go("ord")}}}
-/* ---------- items: stock and products in one place ---------- */
-const TY=["poster","sticker","polaroid","uno"];
-const copt=sel=>'<option value="">No category</option>'+CT.map(c=>`<option value="${c.id}" ${sel==c.id?"selected":""}>${esc(c.name)}</option>`).join("");
-const imgUrl=p=>p?sb.storage.from("product-images").getPublicUrl(p).data.publicUrl:"";
-const mediaUrl=p=>/^https?:\/\//i.test(p||"")?p:imgUrl(p);
-/* Shrinks big phone photos (often 3-8 MB) to about 1400px WebP before uploading */
-const shrink=async f=>{try{if(!/^image\/(jpeg|png|webp)$/.test(f.type))return f;const bm=await createImageBitmap(f),k=Math.min(1,1400/Math.max(bm.width,bm.height));if(k==1&&f.size<250000){bm.close&&bm.close();return f}
- const c=document.createElement("canvas");c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);c.getContext("2d").drawImage(bm,0,0,c.width,c.height);bm.close&&bm.close();
- const b=await new Promise(r=>c.toBlob(r,"image/webp",.82));if(!b||b.type!="image/webp"||b.size>=f.size)return f;return new File([b],f.name.replace(/\.\w+$/,"")+".webp",{type:"image/webp"})}catch(e){return f}};
-const upImg=async f=>{if(!(/^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|avif|heic|heif|bmp)$/i.test(f.name)))throw new Error("Please choose an image file");f=await shrink(f);const p=crypto.randomUUID()+"/"+f.name.replace(/[^\w.\-]/g,"_"),r=await sb.storage.from("product-images").upload(p,f,{cacheControl:"31536000",contentType:f.type||(/\.png$/i.test(f.name)?"image/png":/\.webp$/i.test(f.name)?"image/webp":"image/jpeg")});if(r.error)throw r.error;return p};
-const upMedia=async(f,onP)=>{if(!(/^(image|video)\//.test(f.type)||/\.(jpe?g|png|webp|gif|avif|heic|heif|bmp|mp4|webm|mov|m4v)$/i.test(f.name)))throw new Error("Please choose a photo, GIF, animation, or video");
- const p=crypto.randomUUID()+"/"+f.name.replace(/[^\w.\-]/g,"_"),ct=f.type||(/\.mp4$/i.test(f.name)?"video/mp4":/\.webm$/i.test(f.name)?"video/webm":/\.gif$/i.test(f.name)?"image/gif":"image/jpeg");
- /* Files over 6 MB go up in resumable chunks, so large videos do not time out */
- if(f.size>6*1024*1024&&window.tus){const ses=await sb.auth.getSession(),tok=ses.data&&ses.data.session&&ses.data.session.access_token;if(!tok)throw new Error("Your session expired. Please log in again.");
-  await new Promise((ok,no)=>{const u=new tus.Upload(f,{endpoint:CFG.url+"/storage/v1/upload/resumable",retryDelays:[0,3000,5000,10000,20000],headers:{authorization:"Bearer "+tok,apikey:CFG.key,"x-upsert":"false"},uploadDataDuringCreation:true,removeFingerprintOnSuccess:true,metadata:{bucketName:"product-images",objectName:p,contentType:ct,cacheControl:"31536000"},chunkSize:6*1024*1024,onError:no,onProgress:(a,b)=>{if(onP)onP(Math.round(a/b*100))},onSuccess:ok});u.findPreviousUploads().then(pr=>{if(pr.length)u.resumeFromPreviousUpload(pr[0]);u.start()})});
-  return p}
- const r=await sb.storage.from("product-images").upload(p,f,{cacheControl:"31536000",contentType:ct});if(r.error)throw r.error;return p};
-const ITEMS=()=>P.flatMap(p=>p.variants.map(v=>({p,v}))),cname=p=>(CT.find(c=>c.id==p.category_id)||{}).name||"–";
-const ifilter=({p,v})=>(!iq||(p.name+" "+v.name+" "+(v.code||"")).toLowerCase().includes(iq.toLowerCase()))&&(icat=="all"||(icat=="custom"?p.customizable:String(p.category_id)==icat))&&(!ilow||v.stock<=low());
-function items(m){if(selV!=null&&ITEMS().some(x=>x.v.id==selV))return itemDetail(m);selV=null;
- const all=ITEMS(),sv=all.reduce((x,{v})=>x+v.stock*(v.print_price||0),0),lw=all.filter(({p,v})=>p.active&&v.stock<=low()).length;
- const G=P.map(p=>({p,vs:p.variants.filter(v=>ifilter({p,v}))})).filter(g=>g.vs.length);
- const stk=v=>`${v.stock} PCS ${v.stock<=0?'<span class="bd bad">Out</span>':v.stock<=low()?'<span class="bd lo">Low</span>':""}`;
- const chips=p=>`<span class="chip">${esc(cname(p))}</span>${p.customizable?' <span class="chip c2">Customization</span>':""}${p.active?"":' <span class="chip">Hidden</span>'}`;
- const mqc=v=>(v.min_qty||1)>1?` <span class="chip">Min ${v.min_qty} pcs</span>`:"";
- const px=v=>`<td><input type="number" min="0" step="1" value="${v.price}" data-k="price" aria-label="Selling price"></td><td><input type="number" min="0" step="1" value="${v.print_price||0}" data-k="print_price" aria-label="Printing price"></td>`;
- const body=G.map(({p,vs})=>{
-  if(p.variants.length==1&&p.variants[0].name==NOSZ){const v=p.variants[0];return`<tr class="cl gh" data-v="${v.id}"><td>${esc(p.name)}${mqc(v)}<br>${chips(p)}</td><td>${esc(v.code||"–")}</td><td>${stk(v)}</td>${px(v)}<td><button class="sm" data-adj="${v.id}">Adjust</button> <button class="sm" data-ep="${p.id}">Edit</button></td></tr>`}
-  return`<tr class="cl gh" data-p="${p.id}"><td>${esc(p.name)}<br>${chips(p)}</td><td></td><td>${p.variants.reduce((a,v)=>a+v.stock,0)} PCS total</td><td></td><td></td><td><button class="sm" data-ep="${p.id}">Edit</button></td></tr>`+vs.map(v=>`<tr class="cl vrow" data-v="${v.id}"><td>${esc(v.name)}${mqc(v)}</td><td>${esc(v.code||"–")}</td><td>${stk(v)}</td>${px(v)}<td><button class="sm" data-adj="${v.id}">Adjust</button></td></tr>`).join("")}).join("");
- m.innerHTML=`${hdr("Items",'<button id="mc">Manage categories</button><button class="pri" id="ci">Create Item</button>')}
-<div class="cards2"><div class="stat b"><span>Stock Value (at printing price)</span><b>${inr(sv)}</b></div><div class="stat y go" id="lowc" role="button" tabindex="0"><span>Low Stock</span><b>${lw}</b></div></div>
-<div class="row" style="margin:16px 0"><input id="iq" placeholder="Search by item name or code" value="${esc(iq)}" style="max-width:280px"><select id="ic" style="width:auto" aria-label="Category"><option value="all">All categories</option><option value="custom" ${icat=="custom"?"selected":""}>Customization</option>${CT.map(c=>`<option value="${c.id}" ${icat==String(c.id)?"selected":""}>${esc(c.name)}</option>`).join("")}</select><button class="${ilow?"pri":""}" id="il">Low Stock</button></div>
-<div class="pan tbl w"><table><tr><th>Item Name</th><th>Item Code</th><th>Stock QTY</th><th>Selling Price</th><th>Printing Price</th><th></th></tr>${body||'<tr><td colspan="6" class="mut">No items match. Use Create Item to add one.</td></tr>'}</table></div>`;
- $("iq").oninput=e=>{iq=e.target.value;const p0=e.target.selectionStart;items(m);$("iq").focus();$("iq").setSelectionRange(p0,p0)};
- $("ic").onchange=e=>{icat=e.target.value;items(m)};$("il").onclick=()=>{ilow=!ilow;items(m)};$("lowc").onclick=()=>{ilow=true;items(m)};$("mc").onclick=catsDlg;$("ci").onclick=()=>editP(null);
- m.onchange=async e=>{const k=e.target.dataset.k;if(!k)return;const tr=e.target.closest("tr"),item=ITEMS().find(x=>x.v.id==tr.dataset.v);if(!item)return;const v=item.v,n=e.target.valueAsNumber;if(!Number.isSafeInteger(n)||n<0){e.target.value=v[k]||0;return toast("Price must be a whole non-negative number")}try{await wr(sb.from("variants").update({[k]:n}).eq("id",v.id).select("id"))}catch(er){e.target.value=v[k]||0;return toast(er.message)}v[k]=n;toast("Saved");items(m)};
- m.onclick=e=>{const t=e.target;if(t.dataset.adj){const x=ITEMS().find(y=>y.v.id==t.dataset.adj);return adjDlg(x.p,x.v)}if(t.dataset.ep)return editP(+t.dataset.ep);if(t.closest("input"))return;const r=t.closest("tr[data-v]");if(r){selV=+r.dataset.v;itab="d";return items(m)}const h=t.closest("tr[data-p]");if(h)editP(+h.dataset.p)}}
-function itemDetail(m){const all=ITEMS(),it=all.find(x=>x.v.id==selV),p=it.p,v=it.v,own=me.role=="owner",pp=v.print_price||0;
- m.innerHTML=`<div class="split"><div class="il"><input id="iq2" placeholder="Search by item name or code" value="${esc(iq)}"><button class="dsh" id="ci2">+ Create Item</button>${all.filter(ifilter).map(x=>`<div class="ii ${x.v.id==selV?"on":""}" data-v="${x.v.id}"><b>${esc(ln(x.p.name,x.v.name))}</b><span>${x.v.stock} PCS</span></div>`).join("")}</div><div class="id"><div class="row" style="justify-content:space-between;margin-bottom:6px"><div class="row"><button class="sm" id="bk" aria-label="Back to all items">←</button><h1>${esc(ln(p.name,v.name))}</h1>${stB(v.stock)}</div><div class="row"><button id="as">Adjust Stock</button><button id="ei">Edit</button>${own?'<button class="dng" id="di">Delete</button>':""}</div></div>${warn()}<div class="tabs"><button class="tab ${itab=="d"?"on":""}" data-it="d">Item Details</button><button class="tab ${itab=="s"?"on":""}" data-it="s">Stock Details</button></div><div id="ib"></div></div></div>`;
- const ib=$("ib");
- if(itab=="d")ib.innerHTML=`<div class="two"><div class="pan"><div class="ph2">General Details</div><div class="kv"><div><span>Item Name</span><b>${esc(ln(p.name,v.name))}</b></div><div><span>Item Code</span><b>${esc(v.code||"–")}</b></div><div><span>Category</span><b>${esc(cname(p))}</b></div><div><span>Type</span><b>${p.customizable?"Customization (photo upload)":"Ready-made"}</b></div><div><span>Current Stock</span><b>${v.stock} PCS</b></div><div><span>Stock Value</span><b>${inr(v.stock*pp)}</b></div><div><span>Low Stock Quantity</span><b>${low()} PCS</b></div><div><span>In store</span><b>${p.active?"Visible":"Hidden"}</b></div></div></div><div class="pan"><div class="ph2">Pricing Details</div><div class="kv"><div><span>Selling Price</span><b>${inr(v.price)}</b></div><div><span>Printing Price</span><b>${inr(pp)}</b></div><div><span>Profit per piece</span><b>${inr(v.price-pp)}</b></div><div><span>Margin</span><b>${v.price?Math.round((v.price-pp)/v.price*100):0}%</b></div></div></div></div>`;
- else stockLog(v,ib);
- $("iq2").oninput=e=>{iq=e.target.value;const p0=e.target.selectionStart;itemDetail(m);$("iq2").focus();$("iq2").setSelectionRange(p0,p0)};
- m.onclick=async e=>{const t=e.target,it2=t.closest("[data-it]"),ii=t.closest(".ii");if(it2){itab=it2.dataset.it;return itemDetail(m)}if(ii){selV=+ii.dataset.v;itab="d";return itemDetail(m)}
-  if(t.id=="bk"){selV=null;return items(m)}if(t.id=="ci2")return editP(null);if(t.id=="as")return adjDlg(p,v);if(t.id=="ei")return editP(p.id);
-  if(t.id=="di"){if(p.variants.length<=1)return toast("A product needs at least one size. Use Edit, then Delete product, to remove the whole product.");if(!await ask("Delete "+p.name+" – "+v.name+"? Old orders keep their records.",{ok:"Delete item"}))return;try{await wr(sb.from("variants").delete().eq("id",v.id).select("id"))}catch(er){return toast(er.message)}selV=null;await reload()}}}
-async function stockLog(v,box){box.innerHTML='<p class="mut">Loading…</p>';const r=await run(async()=>must(await sb.from("stock_log").select("*").eq("variant_id",v.id).order("id",{ascending:false}).limit(100)));if(!r)return;if(!$("ib"))return;
- box.innerHTML=`<div class="pan tbl w"><table><tr><th>Date</th><th>Reason</th><th>Change</th><th>Stock after</th><th>By</th></tr>${r.map(x=>`<tr><td>${fdt(x.at)}</td><td>${esc(x.reason||"")}</td><td style="color:var(--${x.delta>0?"ok":"bad"});font-weight:600">${x.delta>0?"+":""}${x.delta}</td><td>${x.stock_after}</td><td>${esc(x.actor_name||"")}</td></tr>`).join("")||'<tr><td colspan="5" class="mut">No stock history yet. Every change from now on is recorded here.</td></tr>'}</table></div>`}
-function adjDlg(p,v){const dg=$("dg");let mode=1;
- dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">Adjust Stock</h3><button class="sm" id="x">Close</button></div><p class="mut" style="margin-top:6px">${esc(ln(p.name,v.name))} · Current stock ${v.stock} PCS</p><div class="seg"><button class="on" data-m="1">Add stock</button><button data-m="-1">Reduce stock</button></div><form class="f" id="af"><input id="aq2" type="number" min="1" step="1" placeholder="Quantity" required><select id="ar2" aria-label="Reason"><option>Restock</option><option>Damaged</option><option>Correction</option><option>Other</option></select><input id="an2" placeholder="Note (optional)" maxlength="80"><p class="mut" id="ap2">New stock: ${v.stock} PCS</p><button class="pri" style="padding:10px">Save</button></form>`;
- const pv=()=>{const q2=Math.floor(+$("aq2").value||0);$("ap2").textContent="New stock: "+Math.max(0,v.stock+mode*q2)+" PCS"};
- $("x").onclick=()=>dg.close();$("aq2").oninput=pv;
- dg.querySelector(".seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;mode=+b.dataset.m;dg.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x==b));pv()};
- $("af").onsubmit=async e=>{e.preventDefault();const q2=+$("aq2").value;if(!Number.isSafeInteger(q2)||q2<1)return toast("Enter a whole-number quantity greater than zero");if(mode<0&&q2>v.stock)return toast("You only have "+v.stock+" in stock");if(!Number.isSafeInteger(v.stock+mode*q2)||v.stock+mode*q2<0)return toast("This adjustment would make stock invalid");
-  const why=$("ar2").value+($("an2").value.trim()?": "+$("an2").value.trim():""),b=e.target.querySelector(".pri");b.disabled=true;
-  const ok=await run(async()=>{must(await sb.rpc("adjust_stock",{vid:v.id,delta:mode*q2,reason:why}));return 1});b.disabled=false;if(ok){LIGHT=true;dg.close();toast("Stock updated")}};
- if(!dg.open)dg.showModal()}
-function catsDlg(){const dg=$("dg"),own=me.role=="owner";
- const draw=()=>{dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">Categories</h3><button class="sm" id="x">Close</button></div><p class="mut" style="margin:6px 0 10px">Categories are the sections customers see in the store, in this order.</p><div class="w"><table id="ct">${CT.map((c,i)=>`<tr><td>${esc(c.name)}</td><td class="mut">${P.filter(p=>p.category_id==c.id).length} product(s)</td><td style="text-align:right"><button class="sm" data-cu="${c.id}" ${i?"":"disabled"} aria-label="Move up">↑</button> <button class="sm" data-cd="${c.id}" ${i<CT.length-1?"":"disabled"} aria-label="Move down">↓</button> <button class="sm" data-cr="${c.id}">Rename</button>${own?` <button class="sm dng" data-cx="${c.id}">Delete</button>`:""}</td></tr>`).join("")||'<tr><td class="mut">No categories yet.</td></tr>'}</table></div><form class="row" id="acf" style="margin-top:12px"><input id="acn" placeholder="New category name" maxlength="60" required style="flex:1"><button class="pri">Add category</button></form>`;
+/* Cart Recovery Manager. Uses the admin page's own helpers (sb, hdr, ask, toast, inr, esc, fdt).
+   All data comes from owner-only database functions. */
+(function(){
+ "use strict";
+ const SHOP="https://shop.theoneanother.in";
+ const F={q:"",from:"",to:"",stage:"",recovery:"",email:"",whatsapp:"",min:"",max:"",page:0};
+ let tab="list",seq=0,timer;
+ const call=async(fn,a)=>{const r=await sb.rpc(fn,a);if(r.error)throw r.error;return r.data};
+ const CLS={sent:"ok",delivered:"ok",read:"ok",clicked:"ok",recovered:"ok",completed:"ok",failed:"bad",bounced:"bad",complained:"bad",opted_out:"bad",pending:"wr",processing:"wr",abandoned:"wr",delayed:"wr",received:"lo"};
+ const bd=s=>`<span class="bd ${CLS[s]||""}">${esc(String(s||"none").replace(/_/g," "))}</span>`;
+ const prods=l=>(l||[]).map(i=>esc(i.name)+(i.variant&&i.variant!="Each"?" ("+esc(i.variant)+")":"")+" × "+i.qty).join(", ")||"–";
+ const STAGES={checkout:"Checkout started",contact:"Contact entered",address:"Address completed",payment:"Payment"};
+ const opts=(id,label,list,v)=>`<select id="${id}" style="width:auto" aria-label="${label}"><option value="">${label}: all</option>${list.map(x=>`<option value="${x[0]}" ${v==x[0]?"selected":""}>${x[1]}</option>`).join("")}</select>`;
+ const MS=["none","pending","sent","delivered","read","failed","bounced","skipped","cancelled"].map(x=>[x,x]);
+
+ window.recov=function(m){
+  m.innerHTML=`${hdr("Cart Recovery Manager",'<button class="sm" id="rc-re">Refresh</button>')}<div class="tabs"><button class="tab ${tab=="list"?"on":""}" data-t="list">Abandoned checkouts</button><button class="tab ${tab=="set"?"on":""}" data-t="set">Message &amp; settings</button></div><div id="rc-body"></div>`;
+  m.onclick=e=>{const t=e.target.closest("[data-t]");if(t){tab=t.dataset.t;window.recov(m);return}if(e.target.id=="rc-re"){window.recov(m);return}
+   const row=e.target.closest("tr[data-ck]");if(row)return detail(row.dataset.ck);
+   const pg=e.target.closest("[data-pg]");if(pg){F.page+=+pg.dataset.pg;load()}};
+  tab=="list"?list():settings()};
+
+ function list(){
+  $("rc-body").innerHTML=`<div class="cards4" id="rc-kpi"></div>
+  <div class="row" style="margin:14px 0"><input id="f-q" type="search" placeholder="Search name, email, phone, product, order" value="${esc(F.q)}" style="max-width:300px">
+  <label class="row mut">From <input id="f-from" type="date" value="${F.from}" style="width:auto"></label><label class="row mut">To <input id="f-to" type="date" value="${F.to}" style="width:auto"></label>
+  ${opts("f-stage","Stage",Object.entries(STAGES),F.stage)}${opts("f-recovery","Recovery",["pending","recovered","completed","expired","opted_out","cancelled"].map(x=>[x,x.replace("_"," ")]),F.recovery)}
+  ${opts("f-email","Email",[["none","not sent"],["sent","followed up"]],F.email)}${opts("f-whatsapp","WhatsApp",[["none","not sent"],["sent","followed up"]],F.whatsapp)}
+  <input id="f-min" type="number" min="0" placeholder="Min ₹" value="${F.min}" style="width:100px"><input id="f-max" type="number" min="0" placeholder="Max ₹" value="${F.max}" style="width:100px"></div>
+  <div id="rc-tbl"></div>`;
+  const on=e=>{const k=(e.target.id||"").slice(2);if(!(k in F))return;F[k]=e.target.value;F.page=0;clearTimeout(timer);timer=setTimeout(load,300)};
+  $("rc-body").oninput=on;
+  load()}
+
+ async function load(){
+  const my=++seq,t=$("rc-tbl");if(!t)return;t.innerHTML='<div class="pan"><p class="mut">Loading…</p></div>';
+  let d;try{d=await call("rec_admin_list",{f:F})}catch(e){if(my==seq&&$("rc-tbl"))$("rc-tbl").innerHTML=`<div class="warn">Could not load: ${esc(e.message)}. If this is the first time, run the cart recovery SQL migration in Supabase, then press Refresh.</div>`;return}
+  if(my!=seq||!$("rc-tbl"))return;
+  const k=d.kpi,rate=k.abandoned?(k.recovered/k.abandoned*100).toFixed(1)+"%":"–";
+  $("rc-kpi").innerHTML=[["Abandoned checkouts",k.abandoned],["Waiting for follow-up",k.pending],["Email follow-ups",k.emails],["WhatsApp follow-ups",k.whatsapps],["Recovered orders",k.recovered],["Recovery rate",rate],["Recovered revenue",inr(k.revenue)]].map(x=>`<div class="stat"><span>${x[0]}</span><b>${x[1]}</b></div>`).join("");
+  const pages=Math.max(1,Math.ceil(d.count/25));
+  $("rc-tbl").innerHTML=d.rows.length?`<div class="pan tbl w"><table><tr>${["Customer","Email","Phone","Products","Cart value","Stage","Last activity","Abandoned","Emailed","WhatsApp","Recovery"].map(h=>`<th>${h}</th>`).join("")}</tr>${d.rows.map(r=>`<tr class="cl" data-ck="${r.id}" tabindex="0"><td>${esc(r.name||"–")}</td><td>${esc(r.email||"–")}</td><td>${esc(r.phone||"–")}</td><td style="white-space:normal;min-width:200px">${prods(r.items)}</td><td>${inr(r.total)}</td><td>${STAGES[r.stage]||esc(r.stage)}${r.payment_status=="failed"?' <span class="bd bad">payment failed</span>':""}</td><td>${fdt(r.last_activity_at)}</td><td>${r.abandoned?fdt(r.abandoned):"–"}</td><td>${bd(r.email_status)}</td><td>${bd(r.whatsapp_status)}</td><td>${bd(r.recovery)}</td></tr>`).join("")}</table></div>
+   <div class="row" style="margin-top:12px"><button class="sm" data-pg="-1" ${F.page?"":"disabled"}>Previous</button><span class="mut">Page ${F.page+1} of ${pages} · ${d.count} checkouts</span><button class="sm" data-pg="1" ${F.page+1<pages?"":"disabled"}>Next</button></div>`
+   :'<div class="pan"><p class="mut">No abandoned checkouts match. New ones appear after a customer leaves checkout for the waiting period.</p></div>';
+  $("rc-tbl").onkeydown=e=>{const r=e.target.closest("tr[data-ck]");if(r&&e.key=="Enter")detail(r.dataset.ck)}}
+
+ async function detail(id){
+  const dg=$("dg");let d;
+  try{d=await call("rec_admin_detail",{ck:id})}catch(e){return toast(e.message)}
+  if(!d)return toast("Checkout not found");
+  const c=d.checkout,open=["active","abandoned"].includes(c.status)&&c.payment_status!="paid",out=ch=>d.optouts.some(o=>o.channel==ch);
+  const can=ch=>open&&(ch=="email"?c.email:c.phone)&&!out(ch);
+  const consent=(on,at,ch)=>out(ch)?"opted out":on?"yes, "+fdt(at):"no";
+  const attempts=d.events.filter(e=>e.type.startsWith("payment_"));
+  const history=ch=>{const l=d.messages.filter(x=>x.channel==ch),j=d.jobs.filter(x=>x.channel==ch);
+   return`<h3>${ch=="email"?"Email":"WhatsApp"} history</h3>${j.map(x=>`<p>${bd(x.status)} ${x.manual?"Manual":"Scheduled"} for ${fdt(x.due_at)}${x.attempts?" · "+x.attempts+" attempt(s)":""}${x.note?` <span class="mut">${esc(x.note)}</span>`:""}</p>`).join("")}${l.map(x=>`<p>${bd(x.status)} ${x.direction=="in"?"Reply received":"Message"} ${fdt(x.at)}${x.clicked_at?" · link opened":""}${x.detail?` <span class="mut">${esc(x.detail)}</span>`:""}${x.provider_id?`<br><span class="mut" style="word-break:break-all">ID ${esc(x.provider_id)}</span>`:""}</p>`).join("")||(j.length?"":'<p class="mut">Nothing yet.</p>')}`};
+  let st={};try{st=await call("rec_admin_settings",{})}catch(e){}
+  const link=SHOP+"/#r="+(d.token||""),
+   vars={customer_name:(c.name||"there").split(" ")[0],product_summary:(c.items||[]).map(i=>i.name+(i.variant&&i.variant!="Each"?" ("+i.variant+")":"")+" × "+i.qty).join(", ")||"your items",quantity:String((c.items||[]).reduce((a,i)=>a+(i.qty||0),0)),cart_total:"₹"+Number(c.total||0).toLocaleString("en-IN"),secure_checkout_link:link},
+   fill=t=>String(t||"").replace(/\{\{(\w+)\}\}/g,(_,k)=>vars[k]??""),
+   msg=fill(st.followup_message);
+  dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">${esc(c.name||"Unnamed customer")} ${bd(c.status=="abandoned"||c.status=="active"?"pending":c.status)}</h3><button class="sm" id="x">Close</button></div>
+  <div class="kv" style="margin-top:12px"><div><span>Email</span><b>${esc(c.email||"–")}</b></div><div><span>Phone</span><b>${esc(c.phone||"–")}</b></div><div><span>Stage</span><b>${STAGES[c.stage]||esc(c.stage)}</b></div><div><span>Address completed</span><b>${c.address_completed?"Yes":"No"}</b></div><div><span>Payment</span><b>${esc(c.payment_status)}${c.order_number?" · "+esc(c.order_number):""}</b></div><div><span>Abandoned</span><b>${c.abandoned_at?fdt(c.abandoned_at):"–"}</b></div></div>
+  <h3>Cart</h3>${(c.items||[]).map(i=>`<p>${esc(i.name)} (${esc(i.variant)}) × ${i.qty} · ${inr(i.price*i.qty)}</p>`).join("")||'<p class="mut">Empty</p>'}<p><b>Total ${inr(c.total)}</b></p>
+  <h3>Payment attempts</h3>${attempts.map(e=>`<p>${esc(e.type.replace(/_/g," "))} · ${fdt(e.at)}</p>`).join("")||'<p class="mut">None.</p>'}${c.razorpay_order_id?`<p class="mut">Razorpay order ${esc(c.razorpay_order_id)}</p>`:""}
+  ${history("email")}${history("whatsapp")}
+  <h3>Activity</h3>${d.events.map(e=>`<p><span class="mut">${fdt(e.at)}</span> ${esc(e.type.replace(/_/g," "))}</p>`).join("")}
+  <h3>Follow-up message</h3><p class="mut">Edit if you like, then choose how to send. WhatsApp and your mail app open with this message ready; you press send there.</p>
+  <textarea id="fu-msg" rows="8" maxlength="4000" style="width:100%">${esc(msg)}</textarea>
+  <div class="row" style="margin-top:12px"><button class="pri" data-a="followup_whatsapp" ${can("whatsapp")?"":"disabled"}>Follow up on WhatsApp</button><button class="pri" data-a="followup_email" ${can("email")?"":"disabled"}>Follow up by email</button><button data-a="copy">Copy message</button><button data-a="link" ${c.payment_status=="paid"||["expired","cancelled"].includes(c.status)?"disabled":""}>Copy cart link</button><button data-a="cancel" ${d.jobs.some(j=>j.status=="pending")?"":"disabled"}>Cancel pending reminders</button><button class="dng" data-a="dnc" ${c.status=="opted_out"?"disabled":""}>Do not contact</button></div>`;
   $("x").onclick=()=>dg.close();
-  const mv=async(id,d)=>{const a=CT.map(c=>c.id),k=a.indexOf(id),n=k+d;if(n<0||n>=a.length)return;[a[k],a[n]]=[a[n],a[k]];await run(async()=>{for(let x=0;x<a.length;x++){const c=CT.find(y=>y.id==a[x]);if(c.position!=x+1)await wr(sb.from("categories").update({position:x+1}).eq("id",c.id).select("id"))}});await run(load);draw()};
-  $("ct").onclick=async e=>{const t=e.target,g=k=>t.dataset[k]?+t.dataset[k]:null;if(g("cu"))return mv(g("cu"),-1);if(g("cd"))return mv(g("cd"),1);
-   if(g("cr")){const c=CT.find(x=>x.id==g("cr")),n=await ask("Rename category",{input:c.name,ok:"Save",danger:0});if(n===null)return;if(!n.trim())return toast("Name cannot be empty");try{await wr(sb.from("categories").update({name:n.trim().slice(0,60)}).eq("id",c.id).select("id"))}catch(er){return toast(er.message)}await run(load);draw()}
-   if(g("cx")){const c=CT.find(x=>x.id==g("cx")),n=P.filter(p=>p.category_id==c.id).length;if(!await ask('Delete category "'+c.name+'"?'+(n?"\n\nIts "+n+" product(s) stay in the store under More.":""),{ok:"Delete category"}))return;try{await wr(sb.from("categories").delete().eq("id",c.id).select("id"))}catch(er){return toast(er.message)}await run(load);draw()}};
-  $("acf").onsubmit=async e=>{e.preventDefault();const n=$("acn").value.trim();if(!n)return;if(CT.some(c=>c.name.toLowerCase()==n.toLowerCase()))return toast("That category already exists");const ok=await run(async()=>{await wr(sb.from("categories").insert({name:n,position:CT.reduce((a,c)=>Math.max(a,c.position),0)+1}).select("id"));return 1});if(ok){await run(load);draw();toast("Category added")}}};
- draw();if(!dg.open)dg.showModal()}
-/* Defaults for a new item, chosen by product type. Stickers and polaroids have no sizes. */
-const PRESET=(t,c)=>{const R=(n,pr,pp,st,mq)=>({id:"new",name:n,code:"",price:pr,print_price:pp,stock:st,min_qty:mq||1});
- if(t=="poster")return[R("A3",249,50,50),R("A4",199,50,50),R("A5",149,50,50)];
- if(t=="sticker")return[c?R(NOSZ,29,10,50,10):R(NOSZ,19,10,50)];
- if(t=="polaroid")return[c?R(NOSZ,69,20,50,5):R(NOSZ,49,20,50)];
- if(t=="uno")return[c?R(NOSZ,999,0,50):R(NOSZ,699,0,50)];
- return[R("","",0,"")]};
-/* One form for both Create Item and Edit: product details, image and all its sizes with selling and printing prices */
-function editP(id){const p=id?P.find(x=>x.id==id):null,dg=$("dg"),own=me.role=="owner";if(id&&!p)return;let rmImg=false,pre=null,saved=false,ims=[...((p&&p.images)||[])],rmIms=[],np=[];
- const drop=pr=>pr&&pr.then(x=>{if(x)sb.storage.from("product-images").remove([x])});
- dg.addEventListener("close",()=>{if(!saved)drop(pre)},{once:true});
- const lay=(ty,cu,n)=>{const ns=single(ty)&&n<=1,mq=cu&&single(ty)&&!NOMQ;return{ns,mq,sz:!ns,cols:[!ns&&"1.5fr","1fr","1fr","1fr","1fr",mq&&"1fr",!ns&&"auto"].filter(Boolean).join(" ")}};
- const vr=(v,o)=>`<div class="vr" style="grid-template-columns:${o.cols}" data-v="${v.id}">${o.sz?`<input class="vn" placeholder="Size / variant" maxlength="60" value="${esc(v.name||"")}" aria-label="Variant name" required>`:`<input class="vn" type="hidden" value="${esc(v.name||NOSZ)}">`}<input class="vc" placeholder="Code" maxlength="30" value="${esc(v.code||"")}" aria-label="Item code"><input class="vp" type="number" min="0" step="1" placeholder="Selling ₹" value="${v.price}" aria-label="Selling price" required><input class="vq" type="number" min="0" step="1" placeholder="Printing ₹" value="${v.print_price}" aria-label="Printing price" required><input class="vs" type="number" min="0" step="1" placeholder="Opening stock" value="${v.stock}" ${v.id!="new"?'readonly title="Use Adjust Stock to change stock"':""} aria-label="Stock" required>${o.mq?`<input class="vm" type="number" min="1" step="1" placeholder="Min qty" value="${v.min_qty||1}" aria-label="Minimum quantity" required>`:""}${o.sz?(v.id!="new"?`<button type="button" class="sm" data-dv="${v.id}" aria-label="Delete size">×</button>`:'<button type="button" class="sm" data-rm="1" aria-label="Remove row">×</button>'):""}</div>`;
- dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">${p?"Edit Item":"Create New Item"}</h3><button class="sm" id="x">Close</button></div><form class="f" id="ep" style="margin-top:12px;max-width:none"><input id="en" placeholder="Product name" value="${esc(p?p.name:"")}" required maxlength="100"><select id="ec2" aria-label="Category">${copt(p?p.category_id:CT[0]&&CT[0].id)}</select><select id="et" aria-label="Product type">${TY.map(t=>`<option ${p&&p.type==t?"selected":""}>${t}</option>`).join("")}</select><p class="mut" style="margin-top:-4px">The type sets the stand-in picture and, for a new item, the ready-made sizes and prices.</p>
-<label class="row"><input type="checkbox" id="ecu" style="width:auto" ${p&&p.customizable?"checked":""}> Show in the store's Customize section instead of the shop (customer uploads photos and a note)</label><label class="row"><input type="checkbox" id="ea" style="width:auto" ${!p||p.active?"checked":""}> Show item in online store</label>
-${p&&p.image?`<img id="pim" src="${esc(imgUrl(p.image))}" alt="" style="max-width:140px;border-radius:10px">`:""}<label class="mut" for="eimg">${p&&p.image?"Replace image":"Product image"}</label><input id="eimg" type="file" accept="image/*">${p&&p.image?'<button type="button" class="sm" id="prm" style="justify-self:start">Remove current image</button>':""}
-<label class="mut" for="edt">Ready-made description (optional, fills the box below)</label><select id="edt" aria-label="Description templates"></select><label class="mut" for="ed">Description (shown on the product page; a new line starts a new paragraph)</label><textarea id="ed" rows="4" maxlength="2000" ${NODET?"disabled":""}>${esc(p&&p.description||"")}</textarea><label class="mut" for="eims">Extra gallery images (up to 6)</label><div class="row" id="xl"></div><input id="eims" type="file" accept="image/*" multiple ${NODET?"disabled":""}><p class="warn" id="dtn" ${NODET?"":"hidden"}>Description and extra images are not saved yet. Run product_details.sql in Supabase, then refresh this page.</p>
-<b>Sizes and prices</b><div class="vr vh" id="vh"></div><div id="vl" class="f" style="max-width:none"></div><p class="warn" id="mqn" hidden>Minimum quantity is not saved yet. Run min_qty.sql in Supabase, then refresh this page.</p><button type="button" class="sm" id="av2" style="justify-self:start">+ Add size</button><button class="pri" style="padding:10px">${p?"Save changes":"Save item"}</button></form>${p&&own?'<p style="margin-top:14px"><button class="sm dng" id="dp">Delete product</button></p>':""}`;
- const read=()=>[...dg.querySelectorAll("#vl .vr")].map(r=>{const o=p&&p.variants.find(v=>v.id==r.dataset.v),mq=r.querySelector(".vm");return{id:r.dataset.v,name:r.querySelector(".vn").value.trim(),code:r.querySelector(".vc").value.trim()||null,price:Number(r.querySelector(".vp").value),print_price:Number(r.querySelector(".vq").value||0),stock:Number(r.querySelector(".vs").value||0),min_qty:mq?Number(mq.value||1):((o&&o.min_qty)||1)}});
- const draw=list=>{const ty=$("et").value,cu=$("ecu").checked,o=lay(ty,cu,list.length);$("vh").style.gridTemplateColumns=o.cols;
-  $("vh").innerHTML=(o.sz?"<span>Size</span>":"")+"<span>Code</span><span>Selling ₹</span><span>Printing ₹</span><span>"+(ty=="polaroid"?"No. of photos":p?"Stock":"Quantity")+"</span>"+(o.mq?"<span>Min qty</span>":"")+(o.sz?"<span></span>":"");
-  $("vl").innerHTML=list.map(v=>vr(v,o)).join("");$("av2").hidden=o.ns;$("mqn").hidden=!(cu&&single(ty)&&NOMQ)};
- const first=()=>p?p.variants.map(v=>({id:v.id,name:v.name,code:v.code,price:v.price,print_price:v.print_price||0,stock:v.stock,min_qty:v.min_qty||1})):PRESET($("et").value,$("ecu").checked);
- draw(first());
- const DT={"poster": ["Premium A3, A4 and A5 posters designed to elevate spaces, easy to display, perfect to decorate your own wall effortlessly.", "Premium A3, A4 & A5 posters for any wall, stylish designs to decorate your own wall effortlessly.", "Stylish A3, A4 and A5 posters made with our own exclusive designs to elevate and decorate your own wall.", "Elegant A3, A4 and A5 posters crafted from our own designs, ideal for enhancing and decorating your own wall."], "sticker": ["Premium versatile stickers for laptops, mobiles, tablets, iPads, desks, bottles and more. Durable, stylish, and easy to use\u2014perfect to decorate everywhere and personalize your everyday items effortlessly.", "Premium stickers for laptops, mobiles, tablets, iPads, water bottles, desks, and more. Durable, stylish, and easy to use\u2014decorate anywhere and personalize your everyday items effortlessly."], "polaroid": ["Premium polaroids for backcases, laptops, fridges, and more. Durable, stylish, and easy to use\u2014perfect to decorate anywhere and personalize your space with a creative touch.", "Unique polaroids for backcases, laptops, fridges, and more. Easy to stick, durable, and ideal for decorating and personalizing anywhere."], "uno": ["Discover our newly launched product, crafted for everyday creativity. Stylish, easy to use, and perfect for adding a personal touch to your space and essentials."]};
- const dtDraw=()=>{const L=DT[$("et").value]||[];$("edt").innerHTML='<option value="">Choose a description…</option>'+L.map((d,i)=>`<option value="${i}">${esc(d.slice(0,70))}…</option>`).join("");$("edt").hidden=!L.length};
- dtDraw();$("et").addEventListener("change",dtDraw);$("edt").onchange=()=>{const L=DT[$("et").value]||[],i=$("edt").value;if(i!==""&&L[+i]&&!NODET)$("ed").value=L[+i]};
- $("et").onchange=$("ecu").onchange=()=>draw(p?read():PRESET($("et").value,$("ecu").checked));
- $("x").onclick=()=>dg.close();
- $("av2").onclick=()=>{const L=read(),f=L[0]||{};draw(L.concat([{id:"new",name:"",code:"",price:"",print_price:f.print_price??"",stock:"",min_qty:f.min_qty||1}]))};
- const drawX=()=>{$("xl").innerHTML=ims.map((k,i)=>`<span style="position:relative"><img src="${esc(imgUrl(k))}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:10px;display:block"><button type="button" class="sm" data-xi="${i}" style="position:absolute;right:-6px;top:-6px;padding:0 6px" aria-label="Remove image">×</button></span>`).join("")};
- drawX();$("xl").onclick=e=>{const i=e.target.dataset.xi;if(i!=null){rmIms.push(ims.splice(+i,1)[0]);drawX()}};
- $("eimg").onchange=e=>{drop(pre);const f=e.target.files[0];pre=f?upImg(f).catch(er=>{toast(er.message);return null}):null};
- if($("prm"))$("prm").onclick=()=>{rmImg=true;if($("pim"))$("pim").remove();$("prm").remove()};
- $("vl").onclick=async e=>{if(e.target.dataset.rm){if($("vl").children.length<2)return toast("A product needs at least one size");e.target.closest(".vr").remove();return}const d=e.target.dataset.dv;if(d){if(p.variants.length<=1)return toast("A product needs at least one size");if(!await ask("Delete this size? Old orders keep their records.",{ok:"Delete size"}))return;try{await wr(sb.from("variants").delete().eq("id",d).select("id"))}catch(er){return toast(er.message)}await run(loadP);editP(id)}};
- $("ep").onsubmit=async e=>{e.preventDefault();const rows=read();
-  if(!rows.length)return toast("Add at least one size");const bad=rows.find(r=>!r.name||!Number.isSafeInteger(r.price)||r.price<0||!Number.isSafeInteger(r.print_price)||r.print_price<0||!Number.isSafeInteger(r.stock)||r.stock<0||!Number.isSafeInteger(r.min_qty)||r.min_qty<1);if(bad)return toast("Every size needs a name, a selling price, a printing price and a stock count (whole non-negative numbers)");
-  const b=e.target.querySelector(".pri");b.disabled=true;
-  const ok=await run(async()=>{let im=p?p.image:null;const nf=$("eimg").files[0];if(nf){im=await(pre||upImg(nf));if(!im)throw new Error("Image upload failed. Please choose the image again.")}else if(rmImg)im=null;
-   np=[];const xf=NODET?[]:[...$("eims").files];if(ims.length+xf.length>6)throw new Error("Maximum 6 extra images");
-   try{for(const f of xf)np.push(await upImg(f))}catch(er){if(np.length)sb.storage.from("product-images").remove(np);np=[];throw er}
-   const body={name:$("en").value.trim(),type:$("et").value,customizable:$("ecu").checked,active:$("ea").checked,category_id:$("ec2").value||null,image:im};if(!NODET){body.description=$("ed").value.trim()||null;body.images=[...ims,...np]}let pid;
-   const mqf=r=>NOMQ?{}:{min_qty:r.min_qty};
-   const ups=p?rows.filter(r=>r.id!="new").map(r=>{const o=p.variants.find(v=>v.id==r.id);return o&&(o.name!=r.name||o.price!=r.price||(o.print_price||0)!=r.print_price||(o.code||null)!=r.code||(!NOMQ&&(o.min_qty||1)!=r.min_qty))?wr(sb.from("variants").update({name:r.name,code:r.code,price:r.price,print_price:r.print_price,...mqf(r)}).eq("id",o.id).select("id")):null}).filter(Boolean):[];
-   const insV=async id=>{const nv=rows.filter(r=>r.id=="new").map(r=>({product_id:id,name:r.name,code:r.code,price:r.price,print_price:r.print_price,stock:r.stock,...mqf(r)}));if(nv.length){const r2=await sb.from("variants").insert(nv);if(r2.error)throw r2.error}};
-   try{if(p){pid=p.id;await Promise.all([wr(sb.from("products").update(body).eq("id",p.id).select("id")),...ups,insV(pid)])}
-    else{pid=must(await sb.from("products").insert(body).select("id").single()).id;try{await insV(pid)}catch(er){await sb.from("products").delete().eq("id",pid);throw er}}}
-   catch(er){if(nf&&im)sb.storage.from("product-images").remove([im]);if(np.length)sb.storage.from("product-images").remove(np);np=[];throw er}
-   if(p&&p.image&&im!==p.image)sb.storage.from("product-images").remove([p.image]);if(rmIms.length)sb.storage.from("product-images").remove(rmIms);
-   return 1});
-  b.disabled=false;if(ok){saved=true;LIGHT=true;dg.close();toast("Item saved")}};
- if($("dp"))$("dp").onclick=async()=>{if(!await ask("Delete "+p.name+" and all its sizes? Old orders keep their records. Consider hiding it instead.",{ok:"Delete product"}))return;try{await wr(sb.from("products").delete().eq("id",p.id).select("id"))}catch(er){return toast(er.message)}if(p.image)sb.storage.from("product-images").remove([p.image]);selV=null;dg.close();toast("Product deleted")};
- if(!dg.open)dg.showModal()}
-/* ---------- sales ---------- */
-const SB=o=>o.status=="cancelled"?'<span class="bd bad">Cancelled</span>':o.paid?'<span class="bd ok">Paid</span>':'<span class="bd lo">Unpaid</span>';
-function sales(m){const[a,b]=salesRange(sper),l=O.filter(o=>o.ts>=a&&o.ts<b&&(!sq2||[o.number,o.customer_name,o.phone].join(" ").toLowerCase().includes(sq2.toLowerCase()))),lv=l.filter(live),tot=sumT(lv),paid=sumT(lv.filter(o=>o.paid)),can=l.filter(o=>!live(o));
- m.innerHTML=`${hdr("Sales Invoices",'<a class="btn pri" href="#nw">Create Sales Invoice</a>')}<div class="cards4"><div class="stat b"><span>Total Sales</span><b>${inr(tot)}</b></div><div class="stat g"><span>Paid</span><b>${inr(paid)}</b></div><div class="stat r"><span>Unpaid</span><b>${inr(tot-paid)}</b></div><div class="stat"><span>Cancelled</span><b>${can.length?can.length+" · "+inr(sumT(can)):"–"}</b></div></div>
-<div class="row" style="margin:16px 0"><input id="sq2" placeholder="Search invoice, name or phone" value="${esc(sq2)}" style="max-width:280px">${salesPeriodSelect("sp",sper)}</div>
-<div class="pan tbl w"><table><tr><th>Date</th><th>Invoice Number</th><th>Party Name</th><th>Amount</th><th>Status</th></tr>${l.slice(0,300).map(o=>`<tr class="cl" data-o="${esc(o.number)}"><td>${fd(o.ts)}</td><td>${esc(o.number)}</td><td>${esc(o.customer_name)}</td><td>${inr(o.total)}</td><td>${SB(o)}</td></tr>`).join("")||'<tr><td colspan="5" class="mut">No sales in this period.</td></tr>'}</table></div>`;
- $("sq2").oninput=e=>{sq2=e.target.value;const p0=e.target.selectionStart;sales(m);$("sq2").focus();$("sq2").setSelectionRange(p0,p0)};
- $("sp").onchange=e=>{sper=e.target.value;sales(m)};
- m.onclick=e=>{const r=e.target.closest("tr[data-o]");if(r)openO(r.dataset.o)}}
-/* ---------- reports (owner only) ---------- */
-function rep(m){if(me.role!="owner"){m.innerHTML=hdr("Reports")+'<p class="mut">Reports are only available to the owner.</p>';return}
- const[a,b]=salesRange(rper),l=O.filter(o=>o.ts>=a&&o.ts<b&&live(o)).sort((x,y)=>y.ts-x.ts),tot=sumT(l),rc=sumT(l.filter(o=>o.paid)),nm="sales-report-"+salesPeriods[rper].toLowerCase().replaceAll(" ","-");
- m.innerHTML=`${hdr("Reports",`${salesPeriodSelect("rp",rper)}<button id="rd">Download CSV</button><button id="rpr">Print</button>`)}<div class="cards4"><div class="stat b"><span>Total sales · ${salesPeriods[rper]}</span><b>${inr(tot)}</b></div><div class="stat g"><span>Amount received</span><b>${inr(rc)}</b></div><div class="stat"><span>Orders</span><b>${l.length}</b></div></div>
-<div class="pan tbl w"><table><tr><th>Date</th><th>Name</th><th>Invoice Number</th><th>Sales Amount</th></tr>${l.map(o=>`<tr><td>${fd(o.ts)}</td><td>${esc(o.customer_name)}</td><td>${esc(o.number)}</td><td>${inr(o.total)}</td></tr>`).join("")||'<tr><td colspan="4" class="mut">No sales in this period.</td></tr>'}${l.length?`<tr><td></td><td></td><td><b>Total</b></td><td><b>${inr(tot)}</b></td></tr>`:""}</table></div><p class="mut" style="margin-top:10px">Cancelled orders are not included. Reports are visible to the owner only.</p>`;
- $("rp").onchange=e=>{rper=e.target.value;rep(m)};
- $("rd").onclick=()=>dl(nm+".csv",[["Date","Name","Invoice Number","Sales Amount"],...l.map(o=>[new Date(o.ts).toISOString().slice(0,10),o.customer_name,o.number,o.total])]);
- $("rpr").onclick=()=>printTable("Sales report ("+salesPeriods[rper]+")",["Date","Name","Invoice Number","Sales Amount"],l.map(o=>[fd(o.ts),o.customer_name,o.number,inr(o.total)]),"<p>Total sales: "+inr(tot)+" · Amount received: "+inr(rc)+" · Orders: "+l.length+"</p>")}
-/* ---------- reviews (owner): approve what customers wrote on the store ---------- */
-let rvf="new";
-async function revs(m){m.innerHTML=hdr("Reviews")+'<p class="mut">Loading…</p>';
- const r=await sb.from("reviews").select("*").order("id",{ascending:false}).limit(300);
- if(r.error){const miss=/does not exist|PGRST205|schema cache/i.test(r.error.message||"")||r.error.code=="42P01"||r.error.code=="PGRST205";m.innerHTML=hdr("Reviews")+'<div class="warn">'+(miss?"Reviews are not set up yet. Run trust.sql in Supabase, then refresh this page.":esc(r.error.message||"Could not load reviews."))+'</div>';return}
- const L=r.data.filter(x=>rvf=="all"||(rvf=="new"?!x.approved:x.approved)),stars=n=>"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n);
- m.innerHTML=`${hdr("Reviews")}<p class="mut" style="margin-bottom:12px">Customers write reviews on the store. You can also add a named customer review yourself.</p>
-<form class="pan f" id="rvf" style="max-width:none;margin-bottom:16px"><div class="row"><input id="rvn" placeholder="Customer name" maxlength="80" required><select id="rvr" style="width:auto" aria-label="Rating">${[5,4,3,2,1].map(n=>`<option value="${n}">${n} stars</option>`).join("")}</select><input id="rvp" type="file" accept="image/*" style="max-width:260px"></div><textarea id="rvb" rows="3" maxlength="1000" placeholder="Review" required></textarea><button class="pri" style="width:auto">Add and show review</button></form>
-<div class="row" style="margin-bottom:14px"><select id="rf" style="width:auto"><option value="new" ${rvf=="new"?"selected":""}>Waiting for approval</option><option value="ok" ${rvf=="ok"?"selected":""}>Approved</option><option value="all" ${rvf=="all"?"selected":""}>All</option></select></div>
-<div class="pan tbl w"><table><tr><th>Date</th><th>Customer</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr>${L.map(x=>`<tr><td>${fd(x.created_at)}</td><td>${x.photo_url||x.photo||x.avatar?`<img class="avatar" src="${esc(mediaUrl(x.photo_url||x.photo||x.avatar))}" alt=""> `:""}${esc(x.name)}</td><td style="color:#f59e0b">${stars(x.rating)}</td><td style="white-space:normal;min-width:240px;max-width:420px">${esc(x.body)}</td><td>${x.approved?'<span class="bd ok">Shown</span>':'<span class="bd lo">Waiting</span>'}</td><td>${x.approved?`<button class="sm" data-h="${x.id}">Hide</button>`:`<button class="sm pri" data-a="${x.id}">Approve</button>`} <button class="sm dng" data-x="${x.id}">Delete</button></td></tr>`).join("")||'<tr><td colspan="6" class="mut">Nothing here.</td></tr>'}</table></div>`;
- $("rf").onchange=e=>{rvf=e.target.value;revs(m)};
- $("rvf").onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector(".pri");b.disabled=true;let photo=null;
-  try{const f=$("rvp").files[0];if(f)photo=await upImg(f);const row={name:$("rvn").value.trim(),rating:Number($("rvr").value),body:$("rvb").value.trim(),approved:true};
-   let saved=false;if(photo){for(const field of ["photo_url","photo","avatar","image"]){const r=await sb.from("reviews").insert({...row,[field]:photo}).select("id");if(!r.error){saved=true;break}}}else{await wr(sb.from("reviews").insert(row).select("id"));saved=true}
-   if(!saved){await wr(sb.from("reviews").insert(row).select("id"));toast("Review added, but the database needs a photo column (photo_url) to show the customer photo");revs(m);return}}catch(er){b.disabled=false;if(photo)sb.storage.from("product-images").remove([photo]);return toast(er.message)}
-  toast("Review added and shown");revs(m)};
- m.onclick=async e=>{const a=e.target.dataset.a,h=e.target.dataset.h,x=e.target.dataset.x;if(!a&&!h&&!x)return;
-  try{if(a||h)await wr(sb.from("reviews").update({approved:!!a}).eq("id",a||h).select("id"));
-   else{if(!await ask("Delete this review?",{ok:"Delete"}))return;await wr(sb.from("reviews").delete().eq("id",x).select("id"))}}catch(er){return toast(er.message)}
-  toast(a?"Review is now shown on the store":h?"Review hidden":"Review deleted");revs(m)}}
-/* ---------- gallery (owner): photos for the store's Instagram section ---------- */
-async function gal(m){m.innerHTML=hdr("Gallery")+'<p class="mut">Loading…</p>';
- const r=await sb.from("gallery").select("*").order("position").order("id");
- if(r.error){const miss=/does not exist|PGRST205|schema cache/i.test(r.error.message||"")||r.error.code=="42P01"||r.error.code=="PGRST205";m.innerHTML=hdr("Gallery")+'<div class="warn">'+(miss?"The gallery is not set up yet. Run trust.sql in Supabase, then refresh this page.":esc(r.error.message||"Could not load gallery."))+'</div>';return}
- const L=r.data;
- m.innerHTML=`${hdr("Gallery")}<p class="mut" style="margin-bottom:12px">Manage the photos shown in the store's Instagram gallery. This collection is separate from Home Content.</p>
-<form class="row" id="gf" style="margin-bottom:16px"><input type="file" id="gfi" accept="image/*" required style="max-width:260px"><input id="gfc" placeholder="Caption (optional)" maxlength="80" style="max-width:240px"><button class="pri">Add gallery photo</button></form>
-<div class="cards4">${L.map((x,i)=>`<div class="stat"><img src="${esc(imgUrl(x.image))}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;${x.active?"":"opacity:.45"}"><span style="margin:8px 0">${esc(x.caption||"No caption")}${x.active?"":" · hidden"}</span><div class="row"><button class="sm" data-u="${x.id}" ${i?"":"disabled"} aria-label="Move earlier">↑</button><button class="sm" data-d="${x.id}" ${i<L.length-1?"":"disabled"} aria-label="Move later">↓</button><button class="sm" data-t="${x.id}">${x.active?"Hide":"Show"}</button><button class="sm dng" data-x="${x.id}">Delete</button></div></div>`).join("")||'<p class="mut">No gallery photos yet. Add the first one above.</p>'}</div>`;
- $("gf").onsubmit=async e=>{e.preventDefault();const f=$("gfi").files[0];if(!f)return;const b=e.target.querySelector(".pri");b.disabled=true;let path=null;
-  try{path=await upImg(f);must(await sb.from("gallery").insert({image:path,caption:$("gfc").value.trim()||null,position:L.reduce((a,x)=>Math.max(a,x.position),0)+1}).select("id"))}catch(er){b.disabled=false;if(path)sb.storage.from("product-images").remove([path]);return toast(er.message)}
-  toast("Gallery photo added");gal(m)};
- const mv=async(id,d)=>{const a=L.map(x=>x.id),k=a.indexOf(id),n=k+d;if(n<0||n>=a.length)return;[a[k],a[n]]=[a[n],a[k]];
-  try{for(let i=0;i<a.length;i++){const x=L.find(y=>y.id==a[i]);if(x.position!=i+1)await wr(sb.from("gallery").update({position:i+1}).eq("id",x.id).select("id"))}}catch(er){return toast(er.message)}gal(m)};
- m.onclick=async e=>{const t=e.target,g=k=>t.dataset[k]?+t.dataset[k]:null;if(g("u"))return mv(g("u"),-1);if(g("d"))return mv(g("d"),1);
-  if(g("t")){const x=L.find(y=>y.id==g("t"));try{await wr(sb.from("gallery").update({active:!x.active}).eq("id",x.id).select("id"))}catch(er){return toast(er.message)}gal(m)}
-  if(g("x")){const x=L.find(y=>y.id==g("x"));if(!await ask("Delete this photo from the gallery?",{ok:"Delete"}))return;try{await wr(sb.from("gallery").delete().eq("id",x.id).select("id"))}catch(er){return toast(er.message)}sb.storage.from("product-images").remove([x.image]);gal(m)}}}
-/* ---------- home content (owner): separate media collection for the shop home ---------- */
-async function homeContent(m){if(me.role!="owner"){m.innerHTML=hdr("Home Content")+'<p class="mut">Home Content is only available to the owner.</p>';return}
- m.innerHTML=hdr("Home Content")+'<p class="mut">Loading…</p>';
- const r=await sb.from("home_content").select("*").order("position").order("id");
- if(r.error){const miss=/does not exist|PGRST205|schema cache/i.test(r.error.message||"")||r.error.code=="42P01"||r.error.code=="PGRST205";m.innerHTML=hdr("Home Content")+'<div class="warn">'+(miss?"Home Content is separate from Gallery. Run admin-features.sql in Supabase, then refresh this page.":esc(r.error.message||"Could not load Home Content."))+'</div>';return}
- const L=r.data;
- m.innerHTML=`${hdr("Home Content")}<p class="mut" style="margin-bottom:12px">Manage media for the shop's home section. This collection is separate from the Instagram Gallery. Photos, GIFs, animations, and videos are supported.</p>
-<form class="row" id="hcf" style="margin-bottom:16px"><input type="file" id="hcfile" accept="image/*,video/*,.gif" required style="max-width:260px"><input id="hccaption" placeholder="Caption (optional)" maxlength="120" style="max-width:240px"><button class="pri">Add to Home Content</button></form>
-<div class="cards4">${L.map((x,i)=>{const u=esc(imgUrl(x.media_path)),isVideo=x.media_type=="video"||/\.(mp4|webm|mov|m4v)$/i.test(x.media_path||"");return `<div class="stat">${isVideo?`<video src="${u}" muted loop playsinline controls style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;${x.active?"":"opacity:.45"}"></video>`:`<img src="${u}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;${x.active?"":"opacity:.45"}">`}<span style="margin:8px 0">${esc(x.caption||"No caption")}${x.active?"":" · hidden"}</span><div class="row"><button class="sm" data-hcu="${x.id}" ${i?"":"disabled"} aria-label="Move earlier">↑</button><button class="sm" data-hcd="${x.id}" ${i<L.length-1?"":"disabled"} aria-label="Move later">↓</button><button class="sm" data-hct="${x.id}">${x.active?"Hide":"Show"}</button><button class="sm dng" data-hcx="${x.id}">Delete</button></div></div>`}).join("")||'<p class="mut">No Home Content media yet. Add the first item above.</p>'}</div>`;
- $("hcf").onsubmit=async e=>{e.preventDefault();const f=$("hcfile").files[0];if(!f)return;const b=e.target.querySelector(".pri");b.disabled=true;let path=null;
-  try{path=await upMedia(f,n=>{b.textContent="Uploading "+n+"%"});must(await sb.from("home_content").insert({media_path:path,media_type:f.type.startsWith("video/")?"video":"image",caption:$("hccaption").value.trim()||null,position:L.reduce((a,x)=>Math.max(a,x.position),0)+1}).select("id"))}catch(er){b.disabled=false;if(path)sb.storage.from("product-images").remove([path]);return toast(er.message)}
-  toast("Home Content added");homeContent(m)};
- const mv=async(id,d)=>{const a=L.map(x=>x.id),k=a.indexOf(id),n=k+d;if(n<0||n>=a.length)return;[a[k],a[n]]=[a[n],a[k]];
-  try{for(let i=0;i<a.length;i++){const x=L.find(y=>y.id==a[i]);if(x.position!=i+1)await wr(sb.from("home_content").update({position:i+1}).eq("id",x.id).select("id"))}}catch(er){return toast(er.message)}homeContent(m)};
- m.onclick=async e=>{const t=e.target,g=k=>t.dataset[k]?+t.dataset[k]:null;if(g("hcu"))return mv(g("hcu"),-1);if(g("hcd"))return mv(g("hcd"),1);
-  if(g("hct")){const x=L.find(y=>y.id==g("hct"));try{await wr(sb.from("home_content").update({active:!x.active}).eq("id",x.id).select("id"))}catch(er){return toast(er.message)}homeContent(m)}
-  if(g("hcx")){const x=L.find(y=>y.id==g("hcx"));if(!await ask("Delete this item from Home Content?",{ok:"Delete"}))return;try{await wr(sb.from("home_content").delete().eq("id",x.id).select("id"))}catch(er){return toast(er.message)}sb.storage.from("product-images").remove([x.media_path]);homeContent(m)}}}
-/* ---------- hashtags (owner): assign tags and search products ---------- */
-let tagQuery="";
-async function tags(m){if(me.role!="owner"){m.innerHTML=hdr("Hashtags")+'<p class="mut">Hashtags are only available to the owner.</p>';return}
- let map={};try{map=JSON.parse(ST.hashtags||"{}")}catch(e){map={}}
- const norm=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
- const tagsFor=p=>[...(map[p.id]||[]),...((p.description||"").match(/[#*][\w-]+/g)||[]),((CT.find(c=>c.id==p.category_id)||{}).name||"")].map(t=>String(t).replace(/^[#*]+/,"").trim()).filter(Boolean);
- const hit=tagsFor;
- m.innerHTML=`${hdr("Hashtags")}<p class="mut" style="margin-bottom:12px">Search by hashtag or assign one or more tags to each product. Use names such as #mugs, #stickers, or *gifts.</p>
-<div class="row" style="margin-bottom:16px"><input id="tagsearch" type="search" placeholder="Search #tag or *symbol" value="${esc(tagQuery)}" style="max-width:320px"></div>
-<div id="tagresults"></div><div class="pan tbl w" style="margin-top:16px"><table><tr><th>Product</th><th>Category</th><th>Hashtags</th><th></th></tr>${P.map(p=>`<tr><td>${esc(p.name)}</td><td>${esc((CT.find(c=>c.id==p.category_id)||{}).name||"–")}</td><td><input data-tag-id="${p.id}" value="${esc((map[p.id]||[]).join(", "))}" placeholder="#mugs, *gifts"></td><td><button class="sm" data-save-tag="${p.id}">Save</button></td></tr>`).join("")||'<tr><td colspan="4" class="mut">No products found.</td></tr>'}</table></div>`;
- const render=()=>{const q=norm(tagQuery.replace(/^[#*]+\s*/,""));const found=P.filter(p=>!q||tagsFor(p).some(t=>norm(t).includes(q)));
- $("tagresults").innerHTML=q?`<div class="ph2">Products for "${esc(tagQuery)}"</div><div class="tag-grid">${found.map(p=>`<div class="tag-card">${p.image?`<img src="${esc(imgUrl(p.image))}" alt="${esc(p.name)}">`:""}<b>${esc(p.name)}</b><p class="mut">${esc((map[p.id]||[]).map(x=>x[0]=="#"||x[0]=="*"?x:"#"+x).join(" "))}</p></div>`).join("")||'<p class="mut">No products are assigned to this hashtag.</p>'}</div>`:""};
- render();
- $("tagsearch").oninput=e=>{tagQuery=e.target.value;render()};
- m.onclick=async e=>{const id=e.target.dataset.saveTag;if(!id)return;const input=m.querySelector(`[data-tag-id="${id}"]`);const arr=input.value.split(",").map(x=>x.trim()).filter(Boolean).map(x=>x[0]=="#"||x[0]=="*"?x:"#"+x);map[Number(id)]=arr;
-  try{await wr(sb.from("settings").upsert({key:"hashtags",value:JSON.stringify(map)}).select("key"));ST.hashtags=JSON.stringify(map);toast("Hashtags saved");tags(m)}catch(er){toast(er.message)}}}
-/* ---------- activity (owner) ---------- */
-const AL={order_created:"Order placed",payment_verified:"Payment verified",payment_unverified:"Payment un-verified",status_changed:"Status changed",order_cancelled:"Order cancelled",refund_marked:"Refund recorded",refund_unmarked:"Refund unmarked",tracking_updated:"Tracking updated",customer_edited:"Customer details edited",order_deleted:"Order deleted",photos_cleared:"Photos deleted",stock_changed:"Stock changed",price_changed:"Price changed",variant_deleted:"Variant deleted",product_added:"Product added",product_deleted:"Product deleted",product_hidden:"Product hidden",product_shown:"Product shown",product_renamed:"Product renamed",setting_changed:"Setting changed"};
-async function actv(m){m.innerHTML='<h1>Activity</h1><p class="mut" style="margin-top:10px">Loading…</p>';const r=await run(async()=>must(await sb.from("activity_log").select("*").order("id",{ascending:false}).limit(500)));if(!r)return;
- m.innerHTML=`<h1>Activity</h1><p class="mut" style="margin-top:6px">Who did what, newest first (last 500 entries). Only the owner can see this.</p><div class="row" style="margin-top:12px"><input id="aq" placeholder="Filter, e.g. TOA-1001 or Staff" style="max-width:300px"><button class="sm" id="ar">Refresh</button></div><div class="pan w"><table id="at2"><tr><th>When</th><th>Who</th><th>What</th><th>Reference</th><th>Details</th></tr>${r.map(x=>`<tr><td>${fdt(x.at)}</td><td>${esc(x.actor_name||"Customer / system")}</td><td>${esc(AL[x.action]||x.action)}</td><td>${esc(x.ref||"")}</td><td>${esc(x.detail||"")}</td></tr>`).join("")||'<tr><td colspan="5" class="mut">Nothing yet.</td></tr>'}</table></div>`;
- $("aq").oninput=e=>{const s=e.target.value.toLowerCase();[...$("at2").rows].slice(1).forEach(tr=>tr.hidden=!!s&&!tr.textContent.toLowerCase().includes(s))};$("ar").onclick=()=>actv(m)}
-/* ---------- settings (owner) ---------- */
-async function set(m){m.innerHTML=`<h1>Settings</h1><form class="f" id="sf2" style="margin-top:14px"><label class="mut" for="sb2">Top band messages for the store (separate with |)</label><textarea id="sb2" rows="3" maxlength="600">${esc(ST.band)}</textarea><label class="mut" for="bf">Show band from (optional)</label><input id="bf" type="date" value="${esc(ST.band_from||"")}"><label class="mut" for="bt">Show band until (optional)</label><input id="bt" type="date" value="${esc(ST.band_to||"")}"><label class="mut" for="su">UPI ID</label><input id="su" value="${esc(ST.upi)}"><label class="mut" for="sw">WhatsApp number (with country code, digits only)</label><input id="sw" value="${esc(ST.wa)}"><label class="mut" for="sm">Minimum order (₹)</label><input id="sm" type="number" min="0" step="1" value="${minO()}"><label class="mut" for="sl">Low-stock level (an alert is sent when a size drops to this number)</label><input id="sl" type="number" min="0" step="1" value="${low()}">
-<b style="margin-top:8px">Printed on packing slips</b><input id="s1" placeholder="Shop name" value="${esc(ST.shop_name||"")}" maxlength="80"><textarea id="s2" rows="2" placeholder="Shop address" maxlength="300">${esc(ST.shop_addr||"")}</textarea><input id="s3" placeholder="Shop phone" value="${esc(ST.shop_phone||"")}" maxlength="40"><button class="pri" style="padding:10px">Save settings</button></form>
-<h3 style="margin-top:26px">Low-stock alerts on Telegram</h3><div class="pan" id="tg"><p class="mut">Loading…</p></div>
-<h3 style="margin-top:26px">Team</h3><div class="pan" id="tm"><p class="mut">Loading…</p></div><p class="mut" style="margin-top:8px">To add or remove a login, use Supabase Authentication, Users, then add or delete the matching profile row (see README).</p>`;
- $("sf2").onsubmit=async e=>{e.preventDefault();const up=$("su").value.trim(),w=$("sw").value.replace(/\D/g,""),mn=Number($("sm").value),lw=Number($("sl").value);
-  if(!/^[\w.\-]{2,}@[\w.\-]{2,}$/.test(up))return toast("UPI ID looks wrong. It should look like name@bank");if(w.length<10||w.length>15)return toast("WhatsApp number must be 10 to 15 digits with country code");
-  if(!Number.isInteger(mn)||mn<0||!Number.isInteger(lw)||lw<0)return toast("Minimum order and low-stock level must be whole numbers");if(!$("sb2").value.trim())return toast("Add at least one band message");
-  const rows=[["band",$("sb2").value.trim()],["band_from",$("bf").value],["band_to",$("bt").value],["upi",up],["wa",w],["min_order",String(mn)],["low_stock",String(lw)],["shop_name",$("s1").value.trim()],["shop_addr",$("s2").value.trim()],["shop_phone",$("s3").value.trim()]].map(([key,value])=>({key,value}));
-  const ok=await run(async()=>{await wr(sb.from("settings").upsert(rows).select("key"));return 1});if(ok){await reload();toast("Settings saved")}};
- tgUi();
- const t=await run(async()=>must(await sb.from("profiles").select("name,role").order("role")));if($("tm"))$("tm").innerHTML=t&&t.length?`<table>${t.map(x=>`<tr><td>${esc(x.name||"(no name)")}</td><td><span class="bd ${x.role=="owner"?"ok":""}">${esc(x.role)}</span></td></tr>`).join("")}</table>`:'<p class="mut">No team members found.</p>'}
-/* Telegram low-stock alerts: the bot token is saved in a private table and is never sent back to this page */
-async function tgUi(){const b=$("tg");if(!b)return;const s=await run(async()=>must(await sb.rpc("alert_status")));if(!$("tg"))return;
- if(!s){b.innerHTML='<p class="mut">Alerts are not installed yet. Run alerts.sql once in Supabase (see README).</p>';return}
- b.innerHTML=`<p>${s.chat?`<span class="bd ok">On</span> Alerts go to Telegram chat ${esc(s.chat)}`:'<span class="bd wr">Not set up</span>'}</p><p class="mut" style="margin:8px 0">You get a message when a size drops to the low-stock level or runs out.<br>1) In Telegram open <b>@BotFather</b>, send /newbot, and copy the token it gives you.<br>2) Open your new bot and press Start (or add the bot to a group with your team).<br>3) In a browser open <b>https://api.telegram.org/bot</b>YOUR_TOKEN<b>/getUpdates</b> and copy the number after "chat":{"id":.<br>4) Paste both below.</p>
-<form class="f" id="tgf"><input id="tgt" type="password" autocomplete="off" placeholder="${s.token?"Bot token saved (leave empty to keep it)":"Bot token"}"><input id="tgc" inputmode="numeric" placeholder="Chat ID (a number, groups start with -)" value="${esc(s.chat||"")}" required><div class="row"><button class="pri">Save</button><button type="button" id="tgs">Send test message</button>${s.chat?'<button type="button" class="dng" id="tgo">Turn off</button>':""}</div></form>`;
- $("tgf").onsubmit=async e=>{e.preventDefault();const tok=$("tgt").value.trim(),chat=$("tgc").value.trim();if(!s.token&&!tok)return toast("Paste the bot token first");if(!/^-?\d{5,20}$/.test(chat))return toast("Chat ID must be a number");
-  const ok=await run(async()=>{must(await sb.rpc("save_telegram",{tok,chat}));return 1});if(ok){toast("Saved. Now press Send test message.");tgUi()}};
- $("tgs").onclick=async()=>{const ok=await run(async()=>{must(await sb.rpc("send_test_alert"));return 1});if(!ok)return;toast("Sending test message…");await new Promise(r=>setTimeout(r,3500));
-  const r=await run(async()=>must(await sb.rpc("alert_result")));if(!r)return;let c={};try{c=JSON.parse(r.content||"{}")}catch(x){}
-  toast(r.status_code==200?"Test sent. Check your Telegram.":"Telegram said: "+(c.description||r.error_msg||"no answer yet, try again in a few seconds"))};
- if($("tgo"))$("tgo").onclick=async()=>{if(!await ask("Turn off Telegram alerts? You can set them up again any time.",{ok:"Turn off"}))return;const ok=await run(async()=>{must(await sb.rpc("clear_telegram"));return 1});if(ok){toast("Alerts turned off");tgUi()}}}
-/* ---------- online payments that did not become an order ---------- */
-function rzDlg(){const dg=$("dg");
- dg.innerHTML=`<div class="row" style="justify-content:space-between"><h3 style="margin:0">Paid online, no order created</h3><button class="sm" id="x">Close</button></div><p class="mut" style="margin:6px 0 10px">These customers paid through Razorpay but the order could not be created (for example the item sold out). Refund each one in the Razorpay dashboard (Payments, search the payment ID, Refund), then press Mark refunded.</p>${PE_ERROR?`<div class="warn" role="alert">Could not load all refund records: ${esc(PE_ERROR)}. Refresh and retry.</div>`:""}<div class="w"><table id="rzt"><tr><th>Date</th><th>Customer</th><th>Amount</th><th>Payment ID</th><th>Reason</th><th></th></tr>${PE.map(x=>`<tr><td>${fdt(x.created_at)}</td><td>${esc((x.customer||{}).name)}<br><span class="mut">${esc((x.customer||{}).phone)}</span></td><td>${inr(x.amount/100)}</td><td>${esc(x.payment_id||"–")}</td><td style="white-space:normal;min-width:180px;max-width:240px">${esc(x.error||"")}</td><td><a class="btn sm" target="_blank" rel="noopener" href="${wa("Hi "+((x.customer||{}).name||"")+", this is theoneanother. Your payment went through but we could not complete the order, so we are refunding it. Sorry about that.",ph((x.customer||{}).phone||""))}">WhatsApp</a> <button class="sm pri" data-rf="${esc(x.rzp_order_id)}">Mark refunded</button></td></tr>`).join("")||'<tr><td colspan="6" class="mut">Nothing to refund.</td></tr>'}</table></div>`;
- $("x").onclick=()=>dg.close();
- $("rzt").onclick=async e=>{const id=e.target.dataset.rf;if(!id)return;if(!await ask("Have you refunded this payment in Razorpay?",{ok:"Yes, refunded",danger:0}))return;try{await wr(sb.from("razorpay_pending").update({status:"refunded"}).eq("rzp_order_id",id).select("rzp_order_id"))}catch(er){return toast(er.message)}await run(load);toast("Marked as refunded");rzDlg()};
- if(!dg.open)dg.showModal()}
-/* ---------- boot ---------- */
-setInterval(async()=>{if(!me||document.hidden||$("dg").open||!["dash","ord","cus"].includes(view))return;const n=O.length,request=load(),seq=loadSeq;try{await request;if(seq!=loadSeq)return;dashError="";if(O.length>n)toast("New order received");if(!["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName))R();else badge()}catch(e){if(seq!=loadSeq)return;const msg=e&&e.message||"Could not refresh data.";if(view=="dash"){dashError=msg;if(!["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName))R()}toast(msg)}},60000);
-function routeView(){let h=location.hash.slice(1);if(h=="stock"||h=="prod")h="items";const ok=["dash","ord","nw","cus","items","sales"];if(me&&me.role=="owner")ok.push(...OWNER_VIEWS);return ok.includes(h)?h:"dash"}
-addEventListener("hashchange",()=>{if(me){view=routeView();R()}});
-$("dg").addEventListener("close",async()=>{if(!me||view=="nw")return;if(LIGHT){LIGHT=false;await run(loadP);R()}else reload()});
-if(sb)sb.auth.onAuthStateChange(ev=>{if(ev=="SIGNED_OUT"&&me)expire()});
-(async()=>{try{if(!sb)return showLogin(initErr);const r=await sb.auth.getSession();if(r.error)return showLogin(r.error.message);const s=r.data&&r.data.session;if(s)await enter();else showLogin()}catch(e){showLogin(e&&e.message||"Startup error. Please refresh and try again.")}})();
-</script>
-</body>
-</html>
+  const ASK={cancel:"Cancel all pending reminders for this checkout?",dnc:"Never contact this customer again for cart reminders, by email or WhatsApp?"};
+  const text=()=>($("fu-msg").value||"").trim(),
+   num=()=>"91"+String(c.phone||"").replace(/\D/g,"").slice(-10);
+  dg.querySelectorAll("[data-a]").forEach(b=>b.onclick=async()=>{const a=b.dataset.a;
+   if(a=="copy"){try{await navigator.clipboard.writeText(text());toast("Message copied")}catch(e){await ask("Copy this message:",{input:text(),ok:"Done",danger:0})}return}
+   if(a=="followup_whatsapp"||a=="followup_email"){const t=text();if(!t)return toast("Write a message first");
+    /* open the chat/mail app first (must happen directly in the click), then record it */
+    if(a=="followup_whatsapp")window.open("https://wa.me/"+num()+"?text="+encodeURIComponent(t),"_blank","noopener");
+    else window.location.href="mailto:"+encodeURIComponent(c.email)+"?subject="+encodeURIComponent(fill(st.email_subject||"Your cart at theoneanother"))+"&body="+encodeURIComponent(t);
+    try{await call("rec_admin_action",{ck:id,act:a});toast("Follow-up recorded");detail(id)}catch(e){toast(e.message)}return}
+   if(ASK[a]&&!await ask(ASK[a],{ok:"Yes",danger:a=="dnc"||a=="cancel"?1:0}))return;
+   b.disabled=true;
+   try{const r=await call("rec_admin_action",{ck:id,act:a});
+    if(a=="link"){try{await navigator.clipboard.writeText(r);toast("Link copied")}catch(e){await ask("Copy this link:",{input:r,ok:"Done",danger:0})}b.disabled=false;return}
+    toast("Done");detail(id)}catch(e){toast(e.message);b.disabled=false}});
+  if(!dg.open)dg.showModal()}
+
+ async function settings(){
+  const b=$("rc-body");b.oninput=null;b.innerHTML='<p class="mut">Loading…</p>';
+  let s;try{s=await call("rec_admin_settings",{})}catch(e){b.innerHTML=`<div class="warn">Could not load settings: ${esc(e.message)}</div>`;return}
+  const chk=(k,l)=>`<label class="row"><input type="checkbox" id="s-${k}" style="width:auto" ${s[k]?"checked":""}> ${l}</label>`;
+  const num=(k,l,min,max)=>`<label class="mut" for="s-${k}">${l}</label><input id="s-${k}" type="number" min="${min}" max="${max}" value="${s[k]}" required>`;
+  const txt=(k,l)=>`<label class="mut" for="s-${k}">${l}</label><input id="s-${k}" value="${esc(s[k])}" required>`;
+  b.innerHTML=`<form class="f" id="rc-sf">
+  ${num("abandon_minutes","Count a checkout as abandoned after this many idle minutes",5,1440)}${num("min_cart_value","Minimum cart value to list (₹)",0,1000000)}${num("expiry_hours","Stop following up and expire the cart link after (hours)",1,720)}${num("retention_days","Delete tracking data after (days)",30,730)}
+  ${txt("email_subject","Email subject (used when you follow up by email)")}<label class="mut" for="s-followup_message">Saved follow-up message (sent by WhatsApp or email). Placeholders: {{customer_name}} {{product_summary}} {{quantity}} {{cart_total}} {{secure_checkout_link}}</label><textarea id="s-followup_message" rows="9" maxlength="4000">${esc(s.followup_message)}</textarea>
+  <p class="mut">Nothing is sent automatically. When you press Follow up on a customer, this message opens in WhatsApp or your mail app with their cart details filled in, and you press send.</p>
+  <button class="pri" style="padding:10px">Save settings</button></form>`;
+  $("rc-sf").onsubmit=async e=>{e.preventDefault();const p={};
+   for(const k in s){const el=$("s-"+k);if(el)p[k]=el.type=="checkbox"?el.checked:el.type=="number"?Number(el.value):el.value.trim()}
+   try{await call("rec_admin_settings",{p});toast("Settings saved");settings()}catch(err){toast(err.message)}}}
+})();
