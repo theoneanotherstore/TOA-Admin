@@ -123,7 +123,7 @@ const ic=n=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColo
 const okF=f=>/\.(jpe?g|png|pdf)$/i.test(f.name)||/^(image\/(jpeg|pjpeg|png)|application\/pdf)$/.test(f.type),extOf=f=>/\.\w+$/.test(f.name)?"":(f.type=="image/png"?".png":f.type=="application/pdf"?".pdf":".jpg"),ctOf=f=>f.type||(/\.png$/i.test(f.name)?"image/png":/\.pdf$/i.test(f.name)?"application/pdf":"image/jpeg");
 const D=864e5,t0=()=>new Date().setHours(0,0,0,0);
 let PE=[],PE_ERROR="",loadSeq=0,lastLoaded=0,dashLoading=false,dashError="";
-let me=null,P=[],CT=[],O=[],NOINV=false,ST={},DU={},view="dash",q="",fs="all",fr="all",pg=1,cq="",NL=[],ND={},dper="d",sper="7",rper="7",dashReportPeriod=7,sq2="",selV=null,itab="d",iq="",icat="all",ilow=false;
+let me=null,P=[],CT=[],O=[],CA=[],cacc="all",NOINV=false,ST={},DU={},view="dash",q="",fs="all",fr="all",pg=1,cq="",NL=[],ND={},dper="d",sper="7",rper="7",dashReportPeriod=7,sq2="",selV=null,itab="d",iq="",icat="all",ilow=false;
 const expire=()=>{me=null;showLogin("Your session expired. Please log in again.")};
 /* Messages appear in the centre of the screen, above any open window */
 const toast=t=>{t=String(t||"Something went wrong");if(/jwt expired|invalid jwt|not authenticated/i.test(t)){if(me)expire();return}if(/failed to fetch|networkerror|load failed/i.test(t))t="Network problem. Check your internet and try again.";const d=document.createElement("div");d.className="toast";d.setAttribute("role","status");d.setAttribute("popover","manual");d.textContent=t;document.body.append(d);try{d.showPopover()}catch(e){}setTimeout(()=>{try{d.hidePopover()}catch(e){}d.remove()},3800)};
@@ -154,12 +154,13 @@ async function load(){
  let data;
  try{
   data=await Promise.race([
-   (async()=>{const[pr,s,o,c,pe]=await Promise.all([fetchP(),sb.from("settings").select("*"),pgd(),sb.from("categories").select("*").order("position").order("id"),sb.from("razorpay_pending").select("*").eq("status","error").order("created_at",{ascending:false}).limit(50)]);return{pr,s,o,c,pe}})(),
+   (async()=>{const[pr,s,o,c,pe,ca]=await Promise.all([fetchP(),sb.from("settings").select("*"),pgd(),sb.from("categories").select("*").order("position").order("id"),sb.from("razorpay_pending").select("*").eq("status","error").order("created_at",{ascending:false}).limit(50),sb.from("customer_accounts").select("id,name,email,phone,created_at").order("created_at",{ascending:false}).limit(5000)]);return{pr,s,o,c,pe,ca}})(),
    new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error("Loading dashboard data timed out after 20 seconds. Check your connection and try again.")),20000)})
   ]);
  }finally{clearTimeout(timer)}
  if(seq!=loadSeq)return seq;
- const{pr,s,o,c,pe}=data;
+ const{pr,s,o,c,pe,ca}=data;
+ CA=ca&&!ca.error?(ca.data||[]):[];
  CT=must(c)||[];
  P=(must(pr)||[]).map(x=>({...x,variants:(x.variants||[]).sort((a,b)=>a.id-b.id)}));
  O=(o||[]).map(x=>({...x,ts:+new Date(x.created_at),total:+x.total,pay_amount:x.pay_amount==null?null:+x.pay_amount,order_items:(x.order_items||[]).sort((a,b)=>a.id-b.id)}));
@@ -320,12 +321,17 @@ function nw(m){const vs=P.filter(p=>p.active).flatMap(p=>p.variants.filter(v=>v.
   toast("Order "+num+" created");NL=[];ND={};await run(load);fs="all";fr="all";q="";pg=1;if(location.hash.slice(1)=="ord")R();else location.hash="ord";setTimeout(()=>openO(num),150)}}
 /* ---------- customers ---------- */
 function cus(m){const g={};O.forEach(o=>{if(!live(o))return;const k=ph(o.phone).slice(-10),c=g[k]||(g[k]={name:o.customer_name,phone:o.phone,email:o.email||"",n:0,u:0,s:0,due:0,last:0});c.n++;c.u+=units(o);if(o.paid)c.s+=o.total;else c.due+=o.total;if(o.ts>c.last){c.last=o.ts;c.name=o.customer_name;c.phone=o.phone;if(o.email)c.email=o.email}});
- const A=Object.values(g),L=A.filter(c=>!cq||(c.name+c.phone+c.email).toLowerCase().includes(cq.toLowerCase())).sort((a,b)=>b.s-a.s||b.last-a.last);
- m.innerHTML=`${hdr("Customers",'<button class="sm" id="ce2">Download CSV</button>')}<div class="cards2"><div class="stat b"><span>All Customers</span><b>${A.length}</b></div><div class="stat y"><span>Unpaid orders</span><b>${inr(A.reduce((x,c)=>x+c.due,0))}</b></div></div>
-<div class="row" style="margin:16px 0"><input id="cs" placeholder="Search name, phone or email" value="${esc(cq)}" style="max-width:300px"></div>
-<div class="pan tbl w"><table><tr><th>Customer name</th><th>Mobile number</th><th>Orders</th><th>Amount received</th><th>Balance</th><th>Last order</th><th></th></tr>${L.map(c=>`<tr><td>${esc(c.name)}${c.n>1?' <span class="bd ok">Repeat</span>':""}<br><span class="mut">${esc(c.email)}</span></td><td>${esc(c.phone)}</td><td>${c.n}</td><td>${inr(c.s)}</td><td>${inr(c.due)}</td><td>${fd(c.last)}</td><td><button class="sm" data-p="${esc(c.phone)}">Orders</button> <a class="btn sm" target="_blank" rel="noopener" href="${wa("Hi "+c.name+", this is theoneanother. ",ph(c.phone))}">WhatsApp</a></td></tr>`).join("")||'<tr><td colspan="7" class="mut">No customers yet.</td></tr>'}</table></div>`;
+ const emk={};Object.keys(g).forEach(k=>{if(g[k].email)emk[g[k].email.toLowerCase()]=k});
+ CA.forEach(a=>{const pk=ph(a.phone||"").slice(-10),em=(a.email||"").toLowerCase();let k=(pk&&g[pk]?pk:null)||(em&&emk[em])||null;
+  if(!k){k=pk||"e:"+em;g[k]={name:a.name||a.email||"Customer",phone:a.phone||"",email:a.email||"",n:0,u:0,s:0,due:0,last:0}}
+  const c=g[k];c.acct=true;c.joined=+new Date(a.created_at);if(!c.name)c.name=a.name||"";if(!c.email)c.email=a.email||"";if(!c.phone)c.phone=a.phone||""});
+ const A=Object.values(g),L=A.filter(c=>(cacc=="all"||(cacc=="acct"?c.acct:!c.acct))&&(!cq||(c.name+c.phone+c.email).toLowerCase().includes(cq.toLowerCase()))).sort((a,b)=>b.s-a.s||b.last-a.last||(b.joined||0)-(a.joined||0));
+ m.innerHTML=`${hdr("Customers",'<button class="sm" id="ce2">Download CSV</button>')}<div class="cards2"><div class="stat b"><span>All Customers</span><b>${A.length}</b></div><div class="stat y"><span>Unpaid orders</span><b>${inr(A.reduce((x,c)=>x+c.due,0))}</b></div><div class="stat b"><span>Registered accounts</span><b>${A.filter(c=>c.acct).length}</b></div></div>
+<div class="row" style="margin:16px 0"><input id="cs" placeholder="Search name, phone or email" value="${esc(cq)}" style="max-width:300px"><select id="cf" style="width:auto" aria-label="Show"><option value="all" ${cacc=="all"?"selected":""}>Show: everyone</option><option value="acct" ${cacc=="acct"?"selected":""}>With a shop account</option><option value="guest" ${cacc=="guest"?"selected":""}>Ordered without an account</option></select></div>
+<div class="pan tbl w"><table><tr><th>Customer name</th><th>Mobile number</th><th>Orders</th><th>Amount received</th><th>Balance</th><th>Last order</th><th>Joined</th><th></th></tr>${L.map(c=>`<tr><td>${esc(c.name)}${c.acct?' <span class="bd ok">Account</span>':""}${c.n>1?' <span class="bd ok">Repeat</span>':""}<br><span class="mut">${esc(c.email)}</span></td><td>${esc(c.phone)}</td><td>${c.n}</td><td>${inr(c.s)}</td><td>${inr(c.due)}</td><td>${c.last?fd(c.last):"–"}</td><td>${c.joined?fd(c.joined):"–"}</td><td>${c.n?`<button class="sm" data-p="${esc(c.phone)}">Orders</button> `:""}${c.phone?`<a class="btn sm" target="_blank" rel="noopener" href="${wa("Hi "+c.name+", this is theoneanother. ",ph(c.phone))}">WhatsApp</a>`:""}</td></tr>`).join("")||'<tr><td colspan="8" class="mut">No customers yet.</td></tr>'}</table></div>`;
+ $("cf").onchange=e=>{cacc=e.target.value;cus(m)};
  $("cs").oninput=e=>{cq=e.target.value;const p=e.target.selectionStart;cus(m);$("cs").focus();$("cs").setSelectionRange(p,p)};
- $("ce2").onclick=()=>dl("customers.csv",[["Name","Phone","Email","Orders","Units","Amount received","Balance","Last order"],...L.map(c=>[c.name,c.phone,c.email,c.n,c.u,c.s,c.due,new Date(c.last).toISOString().slice(0,10)])]);
+ $("ce2").onclick=()=>dl("customers.csv",[["Name","Phone","Email","Account","Joined","Orders","Units","Amount received","Balance","Last order"],...L.map(c=>[c.name,c.phone,c.email,c.acct?"Yes":"No",c.joined?new Date(c.joined).toISOString().slice(0,10):"",c.n,c.u,c.s,c.due,c.last?new Date(c.last).toISOString().slice(0,10):""])]);
  m.onclick=e=>{const p=e.target.dataset.p;if(p){q=p;fs="all";fr="all";pg=1;go("ord")}}}
 /* ---------- items: stock and products in one place ---------- */
 const TY=["poster","sticker","polaroid","uno"];
