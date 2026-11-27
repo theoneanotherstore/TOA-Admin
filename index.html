@@ -41,6 +41,8 @@ h3{font-size:16px;margin:18px 0 8px}
 .two2>.pan,.pan.tbl,.w{min-width:0}
 .dash-content{display:flex;flex-direction:column;gap:16px;width:100%;min-width:0}
 .dash-content>.pan{margin-top:0}
+.dash-split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px}
+.dash-split>.pan{margin-top:0;min-width:0}
 .stat{border:1px solid var(--ln);border-radius:12px;padding:16px;background:#fff}
 .stat.g{background:linear-gradient(135deg,#ecfdf5,#fff)}.stat.b{background:linear-gradient(135deg,#fff7ed,#fff)}.stat.r{background:linear-gradient(135deg,#fef2f2,#fff)}.stat.y{background:linear-gradient(135deg,#fffbeb,#fff)}
 .stat span{display:block;color:var(--mut);font-size:13px}.stat b{display:block;font-size:26px;font-weight:700;margin-top:2px}.stat small{color:var(--mut)}
@@ -99,6 +101,7 @@ dialog .row{flex-wrap:wrap}
 .toast{position:fixed;inset:0;margin:auto;width:fit-content;height:fit-content;max-width:min(92vw,440px);padding:16px 26px;border:0;border-radius:14px;background:#111111;color:#fff;font-weight:600;font-size:15px;text-align:center;box-shadow:0 18px 60px rgba(15,23,42,.5);z-index:90;pointer-events:none;overflow:visible}
 [hidden]{display:none!important}
 @media(max-width:1000px){.two2,.chartbox{grid-template-columns:1fr}}
+@media(max-width:760px){.dash-split{grid-template-columns:1fr}}
 @media(max-width:800px){.app{grid-template-columns:1fr}#sb{height:auto;flex-direction:row;overflow-x:auto;padding:8px;z-index:20}#sb .logo,.sec{display:none}.nv{width:auto;white-space:nowrap;padding:8px 12px}.nv.bot{margin-top:0}main{padding:0 14px 60px}.pgh{margin:0 -14px 14px;padding:12px 14px}.split{grid-template-columns:1fr;margin:0 -14px}.il{max-height:none;border-right:0;position:static}.id{padding:14px}.kv{grid-template-columns:1fr}.vr{grid-template-columns:1fr 1fr}dialog{width:calc(100vw - 20px);padding:16px}}
 </style>
 </head>
@@ -230,8 +233,8 @@ function dash(m){const[a,b]=prange(dper),l=win(a,b),rcv=sumT(l.filter(o=>o.paid)
  m.innerHTML=`${hdr("Dashboard")}${dashError?`<div class="warn" role="alert">Refresh failed: ${esc(dashError)}. Previously loaded values are shown; retry when the connection is available.</div>`:""}${dw.map(x=>`<div class="warn" role="alert">${esc(x)}</div>`).join("")}<div class="row" style="justify-content:space-between;margin:0 0 14px"><b style="font-size:17px">Business Overview</b><div class="row">${pSel("dp",dper)}<span class="mut">Last updated: ${lastLoaded?fdt(lastLoaded):"Not loaded"}</span><button class="sm" id="rf" ${dashLoading?"disabled":""}>${dashLoading?"Refreshing…":"Refresh"}</button></div></div>
 <div class="cards4">${C("g","Amount Received · "+PL2[dper],inr(rcv),"Verified payments")}${C("b","Orders · "+PL2[dper],l.length,"Placed in this period")}${C("r","Unpaid orders",pend.length,inr(sumT(pend))+" not paid","unverified")}</div>
 <div class="dash-content"><div class="pan tbl w" id="dash-latest"><div class="ph2">Latest Transactions</div><div class="w"><table><tr><th>Date</th><th>Type</th><th>Order no</th><th>Party name</th><th>Amount</th></tr>${O.slice(0,5).map(o=>`<tr class="cl" data-o="${esc(o.number)}"><td>${fd(o.ts)}</td><td>${o.status=="cancelled"?"Cancelled order":"Sales order"}</td><td>${esc(o.number)}</td><td>${esc(o.customer_name)}</td><td>${inr(o.total)}</td></tr>`).join("")||'<tr><td colspan="5" class="mut">No orders yet.</td></tr>'}</table></div><p class="center"><a href="#sales">See All Transactions</a></p></div>
-<div class="pan"><div class="ph2">Needs your attention</div>${NT.map(x=>`<div class="nt go" role="button" tabindex="0" data-go="${x[0]}"><span>${x[1]}</span><b>${x[2]}</b></div>`).join("")}${lw.length?`<p style="margin-top:12px"><a class="btn pri sm" target="_blank" rel="noopener" href="${wa("Low stock alert:\n"+lw.map(x=>x.t+": "+x.s).join("\n"))}">Send WhatsApp alert</a></p>`:""}</div>
-<div class="pan"><div class="ph2 row" style="justify-content:space-between"><span>Sales Report · ${salesPeriods[dashReportPeriod]}</span>${salesPeriodSelect("dashSalesPeriod",dashReportPeriod)}</div><div class="chartbox"><div>${area(pts)}</div><div class="side"><span>${salesPeriods[dashReportPeriod]} sales</span><b>${inr(tot)}</b><span>Orders made</span><b>${cnt}</b></div></div></div></div>`;
+<div class="dash-split"><div class="pan"><div class="ph2">Needs your attention</div>${NT.map(x=>`<div class="nt go" role="button" tabindex="0" data-go="${x[0]}"><span>${x[1]}</span><b>${x[2]}</b></div>`).join("")}${lw.length?`<p style="margin-top:12px"><a class="btn pri sm" target="_blank" rel="noopener" href="${wa("Low stock alert:\n"+lw.map(x=>x.t+": "+x.s).join("\n"))}">Send WhatsApp alert</a></p>`:""}</div>
+<div class="pan"><div class="ph2 row" style="justify-content:space-between"><span>Sales Report · ${salesPeriods[dashReportPeriod]}</span>${salesPeriodSelect("dashSalesPeriod",dashReportPeriod)}</div><div class="chartbox"><div>${area(pts)}</div><div class="side"><span>${salesPeriods[dashReportPeriod]} sales</span><b>${inr(tot)}</b><span>Orders made</span><b>${cnt}</b></div></div></div></div></div>`;
  $("dp").onchange=e=>{dper=e.target.value;dash(m)};$("dashSalesPeriod").onchange=e=>{dashReportPeriod=+e.target.value;dash(m)};$("rf").onclick=reload;
  const g=e=>{const c=e.target.closest("[data-go]");if(c){const k=c.dataset.go;if(k=="rzperr")rzDlg();else if(k=="low"){ilow=true;iq="";icat="all";selV=null;go("items")}else{fs=k;fr="all";q="";pg=1;go("ord")}return}const r=e.target.closest("tr[data-o]");if(r)openO(r.dataset.o)};
  m.onclick=g;m.onkeydown=e=>{if(e.key=="Enter")g(e)}}
