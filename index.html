@@ -109,7 +109,7 @@ dialog .row{flex-wrap:wrap}
 <div id="login"><div class="box"><div class="logo" style="font-size:30px">theoneanother</div><p class="mut">Loading…</p></div></div>
 <div class="app" id="app" hidden><aside id="sb"></aside><main id="mn"></main></div>
 <dialog id="dg"></dialog>
-<script src="admin-recovery.js"></script>
+<script src="admin-recovery.js?v=3"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>if(typeof supabase==="undefined")document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>');</script>
@@ -201,7 +201,7 @@ function nav(){const own=me.role=="owner",cur=view=="nw"?"ord":view,T=[["dash","
  $("sb").innerHTML=`<div class="logo">theoneanother</div><div class="sec">GENERAL</div>${T.map(B).join("")}${own?`<div class="sec">SYSTEM</div>${[["act","Activity","act"],["set","Settings","set"]].map(B).join("")}`:""}<button class="nv bot" id="pw">${ic("key")} Password</button><button class="nv bot" id="lo">${ic("out")} Logout (${esc(me.name||me.role)})</button>`;
  $("sb").onclick=async e=>{const b=e.target.closest("button");if(!b)return;if(b.id=="lo"){me=null;await sb.auth.signOut();return showLogin()}if(b.id=="pw")return acct();if(b.dataset.v=="items")selV=null;go(b.dataset.v)};badge()}
 const OWNER_VIEWS=["recov","rep","revs","tags","gal","home","act","set"];
-function R(){try{if(!me)return;if(me.role!="owner"&&OWNER_VIEWS.includes(view)){view="dash";location.hash="dash"}nav();const m=$("mn");m.onclick=null;m.onchange=null;m.oninput=null;m.onkeydown=null;({dash,ord,nw,cus,items,sales,rep,revs,tags,gal,home:homeContent,act:actv,set,recov:window.recov})[view](m)}catch(e){toast(e&&e.message||"View failed to render")}}
+function R(){try{if(!me)return;if(me.role!="owner"&&OWNER_VIEWS.includes(view)){view="dash";location.hash="dash"}nav();const m=$("mn");m.onclick=null;m.onchange=null;m.oninput=null;m.onkeydown=null;({dash,ord,nw,cus,items,sales,rep,revs,tags,gal,home:homeContent,act:actv,set,recov:window.recov||(mm=>{mm.innerHTML='<div class="warn">Cart Recovery file did not load. Make sure admin-recovery.js is uploaded in the same folder as index.html, then hard refresh (Ctrl+Shift+R).</div>'})})[view](m)}catch(e){toast(e&&e.message||"View failed to render")}}
 const reload=async()=>{dashLoading=true;if(view=="dash")R();const request=load(),seq=loadSeq;try{await request;if(seq!=loadSeq)return false;dashError="";return true}catch(e){if(seq!=loadSeq)return false;dashError=e&&e.message||"Could not refresh dashboard data.";toast(dashError);return false}finally{if(seq==loadSeq){dashLoading=false;R()}}};
 /* ---------- shared pieces ---------- */
 const PN={d:"Daily",w:"Weekly",m:"Monthly",y:"Yearly"},PL2={d:"Today",w:"Last 7 days",m:"This month",y:"This year"},CL2={d:"Last 7 days",w:"Last 8 weeks",m:"Last 6 months",y:"This year"};
