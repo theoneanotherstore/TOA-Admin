@@ -49,6 +49,7 @@ h3{font-size:16px;margin:18px 0 8px}
 .pan.tbl{padding:0;overflow:hidden}
 .ph2{padding:14px 16px;font-weight:600;font-size:15px;border-bottom:1px solid var(--ln)}
 .pan>.ph2{margin:-16px -16px 14px}
+.pan.tbl>.ph2{margin:0}
 .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .two2{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;margin-top:16px}
 .two2>.pan{margin-top:0}
@@ -106,6 +107,7 @@ dialog .row{flex-wrap:wrap}
 <div class="app" id="app" hidden><aside id="sb"></aside><main id="mn"></main></div>
 <dialog id="dg"></dialog>
 <script src="admin-recovery.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>if(typeof supabase==="undefined")document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>');</script>
 <script>
@@ -332,8 +334,13 @@ const shrink=async f=>{try{if(!/^image\/(jpeg|png|webp)$/.test(f.type))return f;
  const c=document.createElement("canvas");c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);c.getContext("2d").drawImage(bm,0,0,c.width,c.height);bm.close&&bm.close();
  const b=await new Promise(r=>c.toBlob(r,"image/webp",.82));if(!b||b.type!="image/webp"||b.size>=f.size)return f;return new File([b],f.name.replace(/\.\w+$/,"")+".webp",{type:"image/webp"})}catch(e){return f}};
 const upImg=async f=>{if(!(/^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|avif|heic|heif|bmp)$/i.test(f.name)))throw new Error("Please choose an image file");f=await shrink(f);const p=crypto.randomUUID()+"/"+f.name.replace(/[^\w.\-]/g,"_"),r=await sb.storage.from("product-images").upload(p,f,{cacheControl:"31536000",contentType:f.type||(/\.png$/i.test(f.name)?"image/png":/\.webp$/i.test(f.name)?"image/webp":"image/jpeg")});if(r.error)throw r.error;return p};
-const upMedia=async f=>{if(!(/^(image|video)\//.test(f.type)||/\.(jpe?g|png|webp|gif|avif|heic|heif|bmp|mp4|webm|mov|m4v)$/i.test(f.name)))throw new Error("Please choose a photo, GIF, animation, or video");
- const p=crypto.randomUUID()+"/"+f.name.replace(/[^\w.\-]/g,"_"),r=await sb.storage.from("product-images").upload(p,f,{cacheControl:"31536000",contentType:f.type||(/\.mp4$/i.test(f.name)?"video/mp4":/\.webm$/i.test(f.name)?"video/webm":/\.gif$/i.test(f.name)?"image/gif":"image/jpeg")});if(r.error)throw r.error;return p};
+const upMedia=async(f,onP)=>{if(!(/^(image|video)\//.test(f.type)||/\.(jpe?g|png|webp|gif|avif|heic|heif|bmp|mp4|webm|mov|m4v)$/i.test(f.name)))throw new Error("Please choose a photo, GIF, animation, or video");
+ const p=crypto.randomUUID()+"/"+f.name.replace(/[^\w.\-]/g,"_"),ct=f.type||(/\.mp4$/i.test(f.name)?"video/mp4":/\.webm$/i.test(f.name)?"video/webm":/\.gif$/i.test(f.name)?"image/gif":"image/jpeg");
+ /* Files over 6 MB go up in resumable chunks, so large videos do not time out */
+ if(f.size>6*1024*1024&&window.tus){const ses=await sb.auth.getSession(),tok=ses.data&&ses.data.session&&ses.data.session.access_token;if(!tok)throw new Error("Your session expired. Please log in again.");
+  await new Promise((ok,no)=>{const u=new tus.Upload(f,{endpoint:CFG.url+"/storage/v1/upload/resumable",retryDelays:[0,3000,5000,10000,20000],headers:{authorization:"Bearer "+tok,apikey:CFG.key,"x-upsert":"false"},uploadDataDuringCreation:true,removeFingerprintOnSuccess:true,metadata:{bucketName:"product-images",objectName:p,contentType:ct,cacheControl:"31536000"},chunkSize:6*1024*1024,onError:no,onProgress:(a,b)=>{if(onP)onP(Math.round(a/b*100))},onSuccess:ok});u.findPreviousUploads().then(pr=>{if(pr.length)u.resumeFromPreviousUpload(pr[0]);u.start()})});
+  return p}
+ const r=await sb.storage.from("product-images").upload(p,f,{cacheControl:"31536000",contentType:ct});if(r.error)throw r.error;return p};
 const ITEMS=()=>P.flatMap(p=>p.variants.map(v=>({p,v}))),cname=p=>(CT.find(c=>c.id==p.category_id)||{}).name||"–";
 const ifilter=({p,v})=>(!iq||(p.name+" "+v.name+" "+(v.code||"")).toLowerCase().includes(iq.toLowerCase()))&&(icat=="all"||(icat=="custom"?p.customizable:String(p.category_id)==icat))&&(!ilow||v.stock<=low());
 function items(m){if(selV!=null&&ITEMS().some(x=>x.v.id==selV))return itemDetail(m);selV=null;
@@ -499,7 +506,7 @@ async function homeContent(m){if(me.role!="owner"){m.innerHTML=hdr("Home Content
 <form class="row" id="hcf" style="margin-bottom:16px"><input type="file" id="hcfile" accept="image/*,video/*,.gif" required style="max-width:260px"><input id="hccaption" placeholder="Caption (optional)" maxlength="120" style="max-width:240px"><button class="pri">Add to Home Content</button></form>
 <div class="cards4">${L.map((x,i)=>{const u=esc(imgUrl(x.media_path)),isVideo=x.media_type=="video"||/\.(mp4|webm|mov|m4v)$/i.test(x.media_path||"");return `<div class="stat">${isVideo?`<video src="${u}" muted loop playsinline controls style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;${x.active?"":"opacity:.45"}"></video>`:`<img src="${u}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;${x.active?"":"opacity:.45"}">`}<span style="margin:8px 0">${esc(x.caption||"No caption")}${x.active?"":" · hidden"}</span><div class="row"><button class="sm" data-hcu="${x.id}" ${i?"":"disabled"} aria-label="Move earlier">↑</button><button class="sm" data-hcd="${x.id}" ${i<L.length-1?"":"disabled"} aria-label="Move later">↓</button><button class="sm" data-hct="${x.id}">${x.active?"Hide":"Show"}</button><button class="sm dng" data-hcx="${x.id}">Delete</button></div></div>`}).join("")||'<p class="mut">No Home Content media yet. Add the first item above.</p>'}</div>`;
  $("hcf").onsubmit=async e=>{e.preventDefault();const f=$("hcfile").files[0];if(!f)return;const b=e.target.querySelector(".pri");b.disabled=true;let path=null;
-  try{path=await upMedia(f);must(await sb.from("home_content").insert({media_path:path,media_type:f.type.startsWith("video/")?"video":"image",caption:$("hccaption").value.trim()||null,position:L.reduce((a,x)=>Math.max(a,x.position),0)+1}).select("id"))}catch(er){b.disabled=false;if(path)sb.storage.from("product-images").remove([path]);return toast(er.message)}
+  try{path=await upMedia(f,n=>{b.textContent="Uploading "+n+"%"});must(await sb.from("home_content").insert({media_path:path,media_type:f.type.startsWith("video/")?"video":"image",caption:$("hccaption").value.trim()||null,position:L.reduce((a,x)=>Math.max(a,x.position),0)+1}).select("id"))}catch(er){b.disabled=false;if(path)sb.storage.from("product-images").remove([path]);return toast(er.message)}
   toast("Home Content added");homeContent(m)};
  const mv=async(id,d)=>{const a=L.map(x=>x.id),k=a.indexOf(id),n=k+d;if(n<0||n>=a.length)return;[a[k],a[n]]=[a[n],a[k]];
   try{for(let i=0;i<a.length;i++){const x=L.find(y=>y.id==a[i]);if(x.position!=i+1)await wr(sb.from("home_content").update({position:i+1}).eq("id",x.id).select("id"))}}catch(er){return toast(er.message)}homeContent(m)};
